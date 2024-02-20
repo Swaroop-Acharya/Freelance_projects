@@ -59,7 +59,7 @@ function Home() {
           <Route path="/security/*" element={<Security/>}/>
           <Route path="/buy" element={<BuyGoods />} />
         </Routes>
-        {location.pathname === "/*" && <MainContent />}
+        {location.pathname === "/" && <MainContent />}
       </div>
     </div>
   );

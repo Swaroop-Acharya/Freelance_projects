@@ -1,16 +1,18 @@
 import React from 'react';
 
-export default function Form1() {
+export default function Form1({ setShowForm }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission logic here
     const formData = new FormData(e.target);
     const categoryName = formData.get('categoryName');
     console.log('Category Name:', categoryName);
+    setShowForm(false); // Close the form after submission
   };
+  
 
   return (
-    <div className="max-w-md mx-auto">
+    <div className="max-w-md mx-auto mt-3">
       <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="categoryName">

@@ -1,10 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Routes ,Link,Route} from "react-router-dom";
 import Form1 from "./Form1";
 import Form2 from "./Form2";
 
 export default function Security() {
+  const [showForm, setShowForm] = useState(false);
+  const [showForm2,setShowForm2]=useState(false);
+
+  const handleAddClick = () => {
+    setShowForm(true);
+  };
+  const handleAddClick2 = () => {
+    setShowForm2(true);
+  };
+
   return (
     <div className="flex justify-center mt-8">
       <div className="w-1/2 p-4">
@@ -15,12 +24,14 @@ export default function Security() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <Link to="/form1">
-              <Button variant="outline">Add</Button>
-            </Link>
+            <Button onClick={handleAddClick} variant="outline">
+              Add
+            </Button>
             <Button variant="outline">Display</Button>
           </div>
         </div>
+
+        {showForm && <Form1 setShowForm={setShowForm} />}
       </div>
       <div className="w-1/2 p-4">
         <div className="bg-white rounded-lg shadow-md p-4 flex justify-between">
@@ -29,18 +40,13 @@ export default function Security() {
             <p>Add, Update and Manage Product</p>
           </div>
           <div className="flex flex-col gap-1">
-            <Link to="/form2">
-              <Button variant="outline">Add</Button>
-            </Link>
+            <Button onClick={handleAddClick2} variant="outline">Add</Button>
+
             <Button variant="outline">Display</Button>
           </div>
         </div>
+        {showForm2 && <Form2 setShowForm2={setShowForm2} />}
       </div>
-
-      <Routes>
-        <Route path="/form1" element={<Form1 />} />
-        <Route path="/form2" element={<Form2 />} />
-      </Routes>
     </div>
   );
 }
