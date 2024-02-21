@@ -1,14 +1,18 @@
-import React from 'react';
-
+import React, { useState } from 'react';
+import axios from 'axios';
 export default function Form1({ setShowForm }) {
-  const handleSubmit = (e) => {
+  const [formValue,setFormValue]=useState({categoryName:""});
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here
-    const formData = new FormData(e.target);
-    const categoryName = formData.get('categoryName');
-    console.log('Category Name:', categoryName);
+    console.log(formValue)
+    const formData={categoryName:formValue.categoryName};
+    const res=await axios.post("http://localhost/warehouse/api/index.php",formData)
     setShowForm(false); // Close the form after submission
   };
+
+  const handleChange=(e)=>{
+    setFormValue({...formValue,[e.target.name]:e.target.value})
+  }
   
 
   return (
@@ -19,9 +23,11 @@ export default function Form1({ setShowForm }) {
             Category Name
           </label>
           <input
+          value={formValue.categoryName}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="categoryName"
             name="categoryName"
+            onChange={handleChange}
             type="text"
             placeholder="Category Name"
           />
