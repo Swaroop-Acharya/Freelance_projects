@@ -1,66 +1,65 @@
-import React from "react";
-import { Link, Route, Routes } from "react-router-dom";
-import Vaccines from "./Vaccines";
-import PendingAppointment from "./PendingAppointment";
+import React, { useState } from "react";
 import CompletedAppointment from "./CompletedAppointment";
+import PendingAppointment from "./PendingAppointment";
+import Vaccines from "./Vaccines";
 
-const ParentDashboard = () => {
-  const handleLogout = () => {
-    // Handle logout logic here
+const Login = () => {
+  const [loginType, setLoginType] = useState("parent");
+
+  const handleParentLogin = () => {
+    setLoginType("parent");
+  };
+
+  const handleHospitalLogin = () => {
+    setLoginType("hospital");
+  };
+
+  const handleCompletedAppointment = () => {
+    setLoginType("completed");
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Left sidebar */}
-      <div className="bg-white border-r border-gray-200 w-1/5 min-h-screen sticky top-0">
-        <div className="py-4">
-          <Link to="/vaccines">
-            <button className="block w-full py-2 text-left px-4 hover:bg-gray-200">
-              Vaccines
-            </button>
-          </Link>
-          <Link to="/pending-appointments">
-            <button className="block w-full py-2 text-left px-4 hover:bg-gray-200">
-              Pending Appointments
-            </button>
-          </Link>
-          <Link to="/completed-appointments">
-            <button className="block w-full py-2 text-left px-4 hover:bg-gray-200">
-              Completed Appointments
-            </button>
-          </Link>
+    <div className="bg-custom-gray">
+      <div className="max-w-6xl flex flex-col justify-center  mx-auto px-4 py-8">
+        <div className="flex justify-center mb-4">
+          <button
+            className={`text-lg font-semibold ${
+              loginType === "hospital"
+                ? "text-white  bg-purple-500 p-3 mr-4 rounded"
+                : "text-black bg-purple-600 p-3 mr-4 rounded"
+            }`}
+            onClick={handleHospitalLogin}
+          >
+           Pending Appointments
+          </button>
+          <button
+            className={`text-lg font-semibold ${
+              loginType === "parent"
+                ? "text-white  bg-purple-500 p-3 mr-4 rounded"
+                : "text-black bg-purple-600 p-3 mr-4 rounded"
+            }`}
+            onClick={handleParentLogin}
+          >
+            Vaccines
+          </button>
+          <button
+            className={`text-lg font-semibold ${
+              loginType === "completed"
+                ? "text-white  bg-purple-500 p-3 rounded"
+                : "text-black bg-purple-600 p-3 rounded"
+            }`}
+            onClick={handleCompletedAppointment}
+          >
+            Completed Appointments
+          </button>
         </div>
-      </div>
-      {/* Main content */}
-      <div className="flex flex-col w-full">
-        <div className="">
-          {/* Navbar */}
-          <div className="bg-white border-b border-gray-200 p-4 flex justify-between">
-            <div>Parent Dashboard</div>
-            <button
-              onClick={handleLogout}
-              className="text-gray-600 hover:text-gray-800"
-            >
-              Logout
-            </button>
-          </div>
+        <div>
+          {loginType === "parent" ? <Vaccines /> : loginType === "hospital" ? <PendingAppointment /> : <CompletedAppointment />}
         </div>
-        <div className="flex flex-grow p-4">
-          <Routes>
-            <Route path="/vaccines" element={<Vaccines />} />
-            <Route
-              path="/pending-appointments"
-              element={<PendingAppointment />}
-            />
-            <Route
-              path="/completed-appointments"
-              element={<CompletedAppointment />}
-            />
-          </Routes>
-        </div>
+        
       </div>
     </div>
   );
 };
 
-export default ParentDashboard;
+export default Login;

@@ -1,5 +1,5 @@
 import "./App.css";
-import Home from "./components/Home";
+import Home from "./components/Home"
 import NavBar from "./components/NavBar";
 import { Route, Routes } from "react-router-dom";
 import BookNow from "./components/BookNow";
@@ -11,20 +11,21 @@ import Vaccines from "./components/Vaccines";
 import CompletedAppointment from "./components/CompletedAppointment";
 import PendingAppointment from "./components/PendingAppointment";
 import "./modern-normalise.css";
+
 function App() {
   return (
     <>
       <NavBar />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home/>} />
         <Route path="/book-now" element={<BookNow />} />
         <Route path="/hospital" element={<Hospital />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/hospital-dashboard" element={<HospitalDashBoard/>} />
-        <Route path="/parent-dashboard" element={<ParentDashBoard/>} />
-        <Route path="/vaccines" element={<Vaccines />} />
-        <Route path="/pending-appointments" element={<PendingAppointment />} />
-        <Route path="/completed-appointments" element={<CompletedAppointment/>} />
+        <Route path="/hospital-dashboard" element={<HospitalDashBoard />} />
+        <Route path="/parent-dashboard" element={<ParentDashBoard />} />
+        <Route path="/hospital-dashboard/vaccines" element={<Vaccines />} />
+        <Route path="/hospital-dashboard/pending" element={<PendingAppointment />} />
+        <Route path="/hospital-dashboard/completed" element={<CompletedAppointment />} />
       </Routes>
     </>
   );
