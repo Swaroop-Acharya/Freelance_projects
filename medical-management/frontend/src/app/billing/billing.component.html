@@ -1,0 +1,223 @@
+<div class="billing-container">
+  <div class="header">
+    <h1>Billing Records</h1>
+    <div class="table-controls">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Search bills..." [(ngModel)]="searchText">
+      </div>
+      <button class="add-bill-btn" (click)="openAddModal()">
+        <i class="fas fa-plus"></i> New Bill
+      </button>
+    </div>
+  </div>
+
+  <!-- Add Bill Modal -->
+  <div class="modal-backdrop" *ngIf="showAddModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Add New Bill</h2>
+        <button class="close-btn" (click)="closeAddModal()">&times;</button>
+      </div>
+      <form (ngSubmit)="addRecord()" #billForm="ngForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Bill ID</label>
+            <input type="text" [(ngModel)]="newRecord.billId" name="billId" required />
+          </div>
+          <div class="form-group">
+            <label>Patient Name</label>
+            <input type="text" [(ngModel)]="newRecord.patientName" name="patientName" required />
+          </div>
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" [(ngModel)]="newRecord.date" name="date" required />
+          </div>
+          <div class="form-group">
+            <label>Amount</label>
+            <input type="number" [(ngModel)]="newRecord.amount" name="amount" required min="0" step="0.01" />
+          </div>
+          <div class="form-group">
+            <label>Payment Status</label>
+            <select [(ngModel)]="newRecord.paymentStatus" name="paymentStatus" required>
+              <option value="Paid">Paid</option>
+              <option value="Pending">Pending</option>
+              <option value="Overdue">Overdue</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Payment Method</label>
+            <select [(ngModel)]="newRecord.paymentMethod" name="paymentMethod" required>
+              <option *ngFor="let method of paymentMethods" [value]="method">{{ method }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <input type="text" [(ngModel)]="newRecord.description" name="description" required />
+          </div>
+          <div class="form-group">
+            <label>Doctor</label>
+            <select [(ngModel)]="newRecord.doctor" name="doctor" required>
+              <option *ngFor="let doctor of doctors" [value]="doctor">{{ doctor }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="resetRecordForm()">Reset</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Bill Modal -->
+  <div class="modal-backdrop" *ngIf="showEditModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Edit Bill</h2>
+        <button class="close-btn" (click)="closeEditModal()">&times;</button>
+      </div>
+      <form (ngSubmit)="updateRecord()" #editForm="ngForm" *ngIf="selectedRecord">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Bill ID</label>
+            <input type="text" [(ngModel)]="selectedRecord.billId" name="billId" required />
+          </div>
+          <div class="form-group">
+            <label>Patient Name</label>
+            <input type="text" [(ngModel)]="selectedRecord.patientName" name="patientName" required />
+          </div>
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" [(ngModel)]="selectedRecord.date" name="date" required />
+          </div>
+          <div class="form-group">
+            <label>Amount</label>
+            <input type="number" [(ngModel)]="selectedRecord.amount" name="amount" required min="0" step="0.01" />
+          </div>
+          <div class="form-group">
+            <label>Payment Status</label>
+            <select [(ngModel)]="selectedRecord.paymentStatus" name="paymentStatus" required>
+              <option value="Paid">Paid</option>
+              <option value="Pending">Pending</option>
+              <option value="Overdue">Overdue</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Payment Method</label>
+            <select [(ngModel)]="selectedRecord.paymentMethod" name="paymentMethod" required>
+              <option *ngFor="let method of paymentMethods" [value]="method">{{ method }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <input type="text" [(ngModel)]="selectedRecord.description" name="description" required />
+          </div>
+          <div class="form-group">
+            <label>Doctor</label>
+            <select [(ngModel)]="selectedRecord.doctor" name="doctor" required>
+              <option *ngFor="let doctor of doctors" [value]="doctor">{{ doctor }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-backdrop" *ngIf="showDeleteModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Delete Bill</h2>
+        <button class="close-btn" (click)="closeDeleteModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete the bill for {{ recordToDelete?.patientName }}?</p>
+        <p>Bill ID: {{ recordToDelete?.billId }}</p>
+        <p>Amount: ${{ recordToDelete?.amount }}</p>
+        <p>Date: {{ recordToDelete?.date }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="confirmDelete()" style="background-color: #dc2626;">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Bill ID</th>
+          <th>Patient Name</th>
+          <th>Date</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Payment Method</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let bill of filteredRecords">
+          <td>{{ bill.billId }}</td>
+          <td>{{ bill.patientName }}</td>
+          <td>{{ bill.date }}</td>
+          <td>${{ bill.amount.toFixed(2) }}</td>
+          <td>
+            <div class="status-dropdown">
+              <button class="status-button" (click)="toggleStatusDropdown(bill); $event.stopPropagation()">
+                <span class="status-badge" [style.background-color]="getStatusBgColor(bill.paymentStatus)" [style.color]="getStatusColor(bill.paymentStatus)">
+                  <i [class]="'fas ' + getStatusIcon(bill.paymentStatus)"></i>
+                  {{ bill.paymentStatus }}
+                </span>
+                <i class="fas fa-chevron-down"></i>
+              </button>
+              <div class="status-dropdown-menu" *ngIf="bill.showDropdown" (click)="$event.stopPropagation()">
+                <button *ngFor="let option of statusOptions" 
+                        class="status-option"
+                        (click)="updateStatus(bill, option.value); $event.stopPropagation()">
+                  <i [class]="'fas ' + option.icon"></i>
+                  {{ option.value }}
+                </button>
+              </div>
+            </div>
+          </td>
+          <td>{{ bill.paymentMethod }}</td>
+          <td class="actions">
+            <button class="action-btn edit" (click)="openEditModal(bill)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="action-btn delete" (click)="deleteRecord(bill)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-footer">
+    <div class="showing-entries">
+      Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to 
+      {{ Math.min(currentPage * itemsPerPage, filteredRecords.length) }} 
+      of {{ filteredRecords.length }} entries
+    </div>
+    <div class="pagination">
+      <button [disabled]="currentPage === 1" (click)="onPageChange(currentPage - 1)">
+        Previous
+      </button>
+      <button *ngFor="let page of [].constructor(totalPages); let i = index"
+              [class.active]="currentPage === i + 1"
+              (click)="onPageChange(i + 1)">
+        {{ i + 1 }}
+      </button>
+      <button [disabled]="currentPage === totalPages" (click)="onPageChange(currentPage + 1)">
+        Next
+      </button>
+    </div>
+  </div>
+</div> 

@@ -1,0 +1,235 @@
+<div class="appointments-container">
+  <div class="header">
+    <h1>Appointments</h1>
+    <button class="add-appointment-btn" (click)="openAddModal()">
+      <i class="fas fa-plus"></i> Add Appointment
+    </button>
+  </div>
+
+  <!-- Add Appointment Modal -->
+  <div class="modal-backdrop" *ngIf="showAddModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Add Appointment</h2>
+        <button class="close-btn" (click)="closeAddModal()">&times;</button>
+      </div>
+      <form (ngSubmit)="addAppointment()" #appointmentForm="ngForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Booking ID</label>
+            <input type="text" [(ngModel)]="newAppointment.bookingId" name="bookingId" required />
+          </div>
+          <div class="form-group">
+            <label>Patient Name</label>
+            <input type="text" [(ngModel)]="newAppointment.patientName" name="patientName" required />
+          </div>
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" [(ngModel)]="newAppointment.date" name="date" required />
+          </div>
+          <div class="form-group">
+            <label>Time</label>
+            <input type="time" [(ngModel)]="newAppointment.time" name="time" required />
+          </div>
+          <div class="form-group">
+            <label>Purpose</label>
+            <select [(ngModel)]="newAppointment.purpose" name="purpose" required>
+              <option value="Consultation">Consultation</option>
+              <option value="Follow up">Follow up</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Duration</label>
+            <select [(ngModel)]="newAppointment.duration" name="duration" required>
+              <option value="10 min">10 min</option>
+              <option value="15 min">15 min</option>
+              <option value="20 min">20 min</option>
+              <option value="30 min">30 min</option>
+              <option value="45 min">45 min</option>
+              <option value="60 min">60 min</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select [(ngModel)]="newAppointment.type" name="type" required>
+              <option value="Appointment">Appointment</option>
+              <option value="Walk-in">Walk-in</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Doctor</label>
+            <select [(ngModel)]="newAppointment.doctor" name="doctor" required>
+              <option *ngFor="let doctor of doctors" [value]="doctor">{{ doctor }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="resetAppointmentForm()">Reset</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Appointment Modal -->
+  <div class="modal-backdrop" *ngIf="showEditModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Edit Appointment</h2>
+        <button class="close-btn" (click)="closeEditModal()">&times;</button>
+      </div>
+      <form (ngSubmit)="updateAppointment()" #editForm="ngForm" *ngIf="selectedAppointment">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Booking ID</label>
+            <input type="text" [(ngModel)]="selectedAppointment.bookingId" name="bookingId" required />
+          </div>
+          <div class="form-group">
+            <label>Patient Name</label>
+            <input type="text" [(ngModel)]="selectedAppointment.patientName" name="patientName" required />
+          </div>
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" [(ngModel)]="selectedAppointment.date" name="date" required />
+          </div>
+          <div class="form-group">
+            <label>Time</label>
+            <input type="time" [(ngModel)]="selectedAppointment.time" name="time" required />
+          </div>
+          <div class="form-group">
+            <label>Purpose</label>
+            <select [(ngModel)]="selectedAppointment.purpose" name="purpose" required>
+              <option value="Consultation">Consultation</option>
+              <option value="Follow up">Follow up</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Duration</label>
+            <select [(ngModel)]="selectedAppointment.duration" name="duration" required>
+              <option value="10 min">10 min</option>
+              <option value="15 min">15 min</option>
+              <option value="20 min">20 min</option>
+              <option value="30 min">30 min</option>
+              <option value="45 min">45 min</option>
+              <option value="60 min">60 min</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select [(ngModel)]="selectedAppointment.type" name="type" required>
+              <option value="Appointment">Appointment</option>
+              <option value="Walk-in">Walk-in</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Doctor</label>
+            <select [(ngModel)]="selectedAppointment.doctor" name="doctor" required>
+              <option *ngFor="let doctor of doctors" [value]="doctor">{{ doctor }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-backdrop" *ngIf="showDeleteModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Delete Appointment</h2>
+        <button class="close-btn" (click)="closeDeleteModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete the appointment for {{ appointmentToDelete?.patientName }}?</p>
+        <p>Booking ID: {{ appointmentToDelete?.bookingId }}</p>
+        <p>Date: {{ appointmentToDelete?.date }} at {{ appointmentToDelete?.time }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="confirmDelete()" style="background-color: #dc2626;">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-controls">
+    <div class="entries-info">
+      Show
+      <select [(ngModel)]="itemsPerPage">
+        <option [value]="10">10</option>
+        <option [value]="25">25</option>
+        <option [value]="50">50</option>
+        <option [value]="100">100</option>
+      </select>
+      entries
+    </div>
+    <div class="search-box">
+      <label for="search">Search:</label>
+      <input type="text" id="search" [(ngModel)]="searchText" placeholder="Search...">
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Sl No</th>
+          <th>Booking ID</th>
+          <th>Patient Name</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Purpose</th>
+          <th>Duration</th>
+          <th>Type</th>
+          <th>Doctor</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let appointment of paginatedAppointments; let i = index">
+          <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+          <td>{{ appointment.bookingId }}</td>
+          <td>{{ appointment.patientName }}</td>
+          <td>{{ appointment.date }}</td>
+          <td>{{ appointment.time }}</td>
+          <td>{{ appointment.purpose }}</td>
+          <td>{{ appointment.duration }}</td>
+          <td>{{ appointment.type }}</td>
+          <td>{{ appointment.doctor }}</td>
+          <td class="actions">
+            <button class="action-btn edit" (click)="editAppointment(appointment)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="action-btn delete" (click)="deleteAppointment(appointment)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-footer">
+    <div class="showing-entries">
+      Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to 
+      {{ Math.min(currentPage * itemsPerPage, filteredAppointments.length) }} 
+      of {{ filteredAppointments.length }} entries
+    </div>
+    <div class="pagination">
+      <button [disabled]="currentPage === 1" (click)="onPageChange(currentPage - 1)">
+        Previous
+      </button>
+      <button *ngFor="let page of [].constructor(totalPages); let i = index"
+              [class.active]="currentPage === i + 1"
+              (click)="onPageChange(i + 1)">
+        {{ i + 1 }}
+      </button>
+      <button [disabled]="currentPage === totalPages" (click)="onPageChange(currentPage + 1)">
+        Next
+      </button>
+    </div>
+  </div>
+</div> 

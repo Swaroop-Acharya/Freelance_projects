@@ -1,0 +1,67 @@
+<div class="schedules-container">
+  <div class="schedules-header">
+    <h1>Doctor Schedules</h1>
+  </div>
+
+  <!-- Navigation Buttons -->
+  <div class="nav-buttons">
+    <button 
+      class="nav-button" 
+      [class.active]="activeTab === 'all'"
+      (click)="setActiveTab('all')">
+      All Doctors
+    </button>
+    <button 
+      class="nav-button" 
+      [class.active]="activeTab === 'available'"
+      (click)="setActiveTab('available')">
+      Available Now
+    </button>
+    <button 
+      class="nav-button" 
+      [class.active]="activeTab === 'unavailable'"
+      (click)="setActiveTab('unavailable')">
+      Unavailable
+    </button>
+  </div>
+
+  <!-- Doctors List -->
+  <div class="doctors-list">
+    <div class="doctor-card" *ngFor="let doctor of filteredDoctors">
+      <div class="doctor-header">
+        <div class="doctor-info">
+          <h3>{{ doctor.name }}</h3>
+          <p class="specialization">{{ doctor.specialization }} ID: {{ doctor.id }}</p>
+        </div>
+        <div class="status-badge" [class.available]="doctor.status === 'available'">
+          {{ doctor.status === 'available' ? 'Available' : 'Unavailable' }}
+        </div>
+      </div>
+
+      <div class="doctor-details">
+        <div class="working-hours">
+          <h4>Working Hours</h4>
+          <p class="hours">{{ doctor.workingHours }}</p>
+          <div class="days">
+            <span class="day" *ngFor="let day of doctor.workingDays">{{ day }}</span>
+          </div>
+        </div>
+
+        <div class="next-available">
+          <h4>Next Available</h4>
+          <p>{{ doctor.nextAvailable }}</p>
+        </div>
+      </div>
+
+      <div class="doctor-actions">
+        <button class="action-button view-schedule">View Schedule</button>
+        <button 
+          class="action-button toggle-availability" 
+          [class.available]="doctor.status === 'available'"
+          (click)="toggleAvailability(doctor)">
+          {{ doctor.status === 'available' ? 'Mark Unavailable' : 'Mark Available' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div> 

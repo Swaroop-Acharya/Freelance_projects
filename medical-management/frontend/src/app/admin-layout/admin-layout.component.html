@@ -1,0 +1,65 @@
+  <!-- Main Content -->
+  <div class="main-content">
+    <router-outlet></router-outlet>
+  </div>
+
+  <!-- Profile View -->
+  <div class="profile-view" *ngIf="showProfileView">
+    <div class="profile-content">
+      <div class="profile-header">
+        <h2>Profile</h2>
+        <button class="close-btn" (click)="showProfileView = false">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="profile-body">
+        <!-- Add your profile content here -->
+        <div class="profile-info">
+          <div class="info-group">
+            <label>Name</label>
+            <p>John Doe</p>
+          </div>
+          <div class="info-group">
+            <label>Email</label>
+            <p>john.doe@example.com</p>
+          </div>
+          <div class="info-group">
+            <label>Role</label>
+            <p>Administrator</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Password View -->
+  <div class="change-password-view" *ngIf="showChangePassword">
+    <div class="change-password-content">
+      <div class="change-password-header">
+        <h2>Change Password</h2>
+        <button class="close-btn" (click)="showChangePassword = false">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="change-password-body">
+        <form (ngSubmit)="onChangePassword()">
+          <div class="form-group">
+            <label>Current Password</label>
+            <input type="password" [(ngModel)]="currentPassword" name="currentPassword" required>
+          </div>
+          <div class="form-group">
+            <label>New Password</label>
+            <input type="password" [(ngModel)]="newPassword" name="newPassword" required>
+          </div>
+          <div class="form-group">
+            <label>Confirm New Password</label>
+            <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" required>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="showChangePassword = false">Cancel</button>
+            <button type="submit" class="btn btn-primary">Update Password</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div> 

@@ -1,0 +1,156 @@
+.dashboard-container {
+  padding: 2rem;
+}
+
+.dashboard-container h1 {
+  color: #1f2937;
+  margin-bottom: 2rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #406e8d;
+}
+
+.stat-card:hover .stat-content h3 {
+  color: white;
+}
+
+.stat-card:hover .stat-value {
+  color: white;
+}
+
+.stat-card:hover .stat-details {
+  color: #95a5a6;
+}
+
+.stat-card:hover .new-value {
+  color: #2ecc71;
+}
+
+.stat-card:hover .trend {
+  color: #95a5a6;
+}
+
+.stat-card:hover .trend.positive {
+  color: #2ecc71;
+}
+
+.stat-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.stat-info {
+  flex: 1;
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.stat-content h3 {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin: 0.5rem 0;
+  font-weight: 500;
+}
+
+.stat-value {
+  color: #1f2937;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.stat-details {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+}
+
+.new-value {
+  color: #059669;
+}
+
+.trend {
+  color: #6b7280;
+}
+
+.trend.positive {
+  color: #059669;
+}
+
+.button-container {
+  margin: 1rem -1.5rem -1.5rem -1.5rem;
+  width: calc(100% + 3rem);
+}
+
+.more-info-btn {
+  width: 100%;
+  height: 40px;
+  background-color: #3c8dbc;
+  color: white;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.more-info-btn i {
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.more-info-btn:hover {
+  background-color: #367fa9;
+}
+
+.more-info-btn:hover i {
+  transform: translateX(4px);
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+} 

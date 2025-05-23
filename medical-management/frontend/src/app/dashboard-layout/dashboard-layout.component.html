@@ -1,0 +1,126 @@
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar" [class.sidebar-closed]="!sidebarOpen">
+      <div class="user-profile">
+        <div class="user-avatar">SU</div>
+        <div class="user-info" *ngIf="sidebarOpen">
+          <div class="user-name">Sunanda</div>
+          <div class="availability">
+            <span class="status-dot"></span>
+            Available
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-title" *ngIf="sidebarOpen">MAIN NAVIGATION</div>
+      <ul class="menu-list">
+        <li>
+          <button class="menu-item" (click)="setTab('dashboard')">
+            <i class="fas fa-dashboard"></i>
+            <span class="menu-text" *ngIf="sidebarOpen">Dashboard</span>
+          </button>
+        </li>
+        <li>
+          <button class="menu-item" (click)="setTab('doctor-schedules')">
+            <i class="fas fa-user-md"></i>
+            <span class="menu-text" *ngIf="sidebarOpen">Doctor Schedules</span>
+          </button>
+        </li>
+        <li>
+          <button class="menu-item" (click)="setTab('patients')">
+            <i class="fas fa-user"></i>
+            <span class="menu-text" *ngIf="sidebarOpen">Patients</span>
+          </button>
+        </li>
+        <li>
+          <button class="menu-item" (click)="setTab('appointments')">
+            <i class="fas fa-calendar"></i>
+            <span class="menu-text" *ngIf="sidebarOpen">Appointments</span>
+          </button>
+        </li>
+        <li>
+          <button class="menu-item" (click)="setTab('billing')">
+            <i class="fas fa-file-text"></i>
+            <span class="menu-text" *ngIf="sidebarOpen">Billing</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+  
+    <!-- Main Content -->
+    <div class="main-content" [class.main-content-expanded]="!sidebarOpen">
+      <!-- Top Navbar -->
+      <div class="top-navbar">
+        <div class="navbar-left">
+          <div class="company-name" [class.company-logo]="!sidebarOpen">
+            <span *ngIf="sidebarOpen">C2CAS</span>
+            <img *ngIf="!sidebarOpen" src="assets/images/logo-sml.jpg" alt="C2CAS Logo" class="logo-image">
+          </div>
+          <button class="menu-toggle" (click)="toggleSidebar()">☰</button>
+        </div>
+        <div class="dashboard-title">Dashboard</div>
+        <div class="navbar-right">
+          <!-- Notification Bell -->
+          <div class="notification-bell" (click)="toggleNotifications()">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge" *ngIf="unreadNotifications > 0">
+              {{ unreadNotifications }}
+            </span>
+            <app-notifications 
+              *ngIf="showNotifications" 
+              (closeDropdown)="closeNotifications()"
+            ></app-notifications>
+          </div>
+          
+          <!-- Profile Dropdown -->
+          <div class="profile-dropdown">
+            <button class="profile-button" (click)="toggleProfileDropdown()">
+              <div class="profile-initials">{{ userProfile.initials }}</div>
+            </button>
+            
+            <!-- Dropdown Menu -->
+            <div class="dropdown-menu" *ngIf="showProfileDropdown">
+              <div class="profile-info">
+                <div class="profile-avatar">{{ userProfile.initials }}</div>
+                <div class="profile-details">
+                  <div class="profile-name">{{ userProfile.name }}</div>
+                  <div class="profile-title">{{ userProfile.title }}</div>
+                  <div class="member-since">Member since {{ userProfile.memberSince }}</div>
+                </div>
+              </div>
+              
+              <div class="dropdown-divider"></div>
+              
+              <button class="dropdown-item" (click)="viewProfile()">
+                <i class="fas fa-user"></i>
+                Profile
+              </button>
+              <button class="dropdown-item" (click)="changePassword()">
+                <i class="fas fa-key"></i>
+                Change Password
+              </button>
+              <button class="dropdown-item" (click)="signOut()">
+                <i class="fas fa-sign-out-alt"></i>
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Dynamic Content -->
+      <div class="content-area">
+        <ng-container *ngIf="!isProfileOrChangePasswordRoute()">
+          <ng-container [ngSwitch]="activeTab">
+            <app-dashboard *ngSwitchCase="'dashboard'"></app-dashboard>
+            <app-doctor-schedules *ngSwitchCase="'doctor-schedules'"></app-doctor-schedules>
+            <app-patients *ngSwitchCase="'patients'"></app-patients>
+            <app-appointments *ngSwitchCase="'appointments'"></app-appointments>
+            <app-billing *ngSwitchCase="'billing'"></app-billing>
+          </ng-container>
+        </ng-container>
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+</div>
+  

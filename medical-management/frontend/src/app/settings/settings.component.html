@@ -1,0 +1,91 @@
+<div class="settings-container">
+  <h1>Settings</h1>
+
+  <form (ngSubmit)="saveSettings()">
+    <!-- Notifications Section -->
+    <div class="settings-section">
+      <h2>Notifications</h2>
+      <div class="settings-group">
+        <div class="setting-item">
+          <label>
+            <input type="checkbox" [(ngModel)]="settings.notifications.email" name="notifications.email">
+            Email Notifications
+          </label>
+        </div>
+        <div class="setting-item">
+          <label>
+            <input type="checkbox" [(ngModel)]="settings.notifications.sms" name="notifications.sms">
+            SMS Notifications
+          </label>
+        </div>
+        <div class="setting-item">
+          <label>
+            <input type="checkbox" [(ngModel)]="settings.notifications.push" name="notifications.push">
+            Push Notifications
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Appearance Section -->
+    <div class="settings-section">
+      <h2>Appearance</h2>
+      <div class="settings-group">
+        <div class="setting-item">
+          <label for="theme">Theme:</label>
+          <select id="theme" [(ngModel)]="settings.appearance.theme" name="appearance.theme">
+            <option *ngFor="let theme of themes" [value]="theme">{{theme | titlecase}}</option>
+          </select>
+        </div>
+        <div class="setting-item">
+          <label for="fontSize">Font Size:</label>
+          <select id="fontSize" [(ngModel)]="settings.appearance.fontSize" name="appearance.fontSize">
+            <option *ngFor="let size of fontSizes" [value]="size">{{size | titlecase}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Privacy Section -->
+    <div class="settings-section">
+      <h2>Privacy</h2>
+      <div class="settings-group">
+        <div class="setting-item">
+          <label for="profileVisibility">Profile Visibility:</label>
+          <select id="profileVisibility" [(ngModel)]="settings.privacy.profileVisibility" name="privacy.profileVisibility">
+            <option *ngFor="let option of visibilityOptions" [value]="option">{{option | titlecase}}</option>
+          </select>
+        </div>
+        <div class="setting-item">
+          <label>
+            <input type="checkbox" [(ngModel)]="settings.privacy.showEmail" name="privacy.showEmail">
+            Show Email Address
+          </label>
+        </div>
+        <div class="setting-item">
+          <label>
+            <input type="checkbox" [(ngModel)]="settings.privacy.showPhone" name="privacy.showPhone">
+            Show Phone Number
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Language Section -->
+    <div class="settings-section">
+      <h2>Language</h2>
+      <div class="settings-group">
+        <div class="setting-item">
+          <label for="language">Select Language:</label>
+          <select id="language" [(ngModel)]="settings.language" name="language">
+            <option *ngFor="let lang of languages" [value]="lang.code">{{lang.name}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-actions">
+      <button type="submit" class="save-button">Save Settings</button>
+    </div>
+  </form>
+</div> 

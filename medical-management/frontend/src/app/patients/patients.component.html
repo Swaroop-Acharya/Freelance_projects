@@ -1,0 +1,460 @@
+<div class="patients-container">
+  <div class="header">
+    <h1>Patients</h1>
+    <button class="add-user-btn" (click)="addNewPatient()">
+      <i class="fas fa-plus"></i> Add User
+    </button>
+  </div>
+
+  <div class="table-controls">
+    <div class="entries-info">
+      Show
+      <select [(ngModel)]="itemsPerPage">
+        <option [value]="10">10</option>
+        <option [value]="25">25</option>
+        <option [value]="50">50</option>
+        <option [value]="100">100</option>
+      </select>
+      entries
+    </div>
+    <div class="search-box">
+      <label for="search">Search:</label>
+      <input type="text" id="search" [(ngModel)]="searchText" placeholder="Search...">
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Sl No</th>
+          <th>Patient Name</th>
+          <th>Age</th>
+          <th>Phone Number</th>
+          <th>Booking ID</th>
+          <th>Waiting No</th>
+          <th>Appointment Status</th>
+          <th>Appointment Category</th>
+          <th>Appointment Time</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let patient of paginatedPatients; let i = index">
+          <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+          <td>{{ patient.name }}</td>
+          <td>{{ patient.age }}</td>
+          <td>{{ patient.phoneNumber }}</td>
+          <td>{{ patient.bookingId }}</td>
+          <td>{{ patient.waitingNo }}</td>
+          <td>
+            <div class="status-dropdown">
+              <button class="status-button" (click)="toggleStatusDropdown(patient); $event.stopPropagation()">
+                <span class="status-badge" [style.background-color]="getStatusBgColor(patient.status)" [style.color]="getStatusColor(patient.status)">
+                  <i [class]="'fas ' + getStatusIcon(patient.status)"></i>
+                  {{ patient.status }}
+                </span>
+                <i class="fas fa-chevron-down"></i>
+              </button>
+              <div class="status-dropdown-menu" *ngIf="patient.showDropdown" (click)="$event.stopPropagation()">
+                <button *ngFor="let option of statusOptions" 
+                        class="status-option"
+                        (click)="updateStatus(patient, option.value); $event.stopPropagation()">
+                  <i [class]="'fas ' + option.icon"></i>
+                  {{ option.value }}
+                </button>
+              </div>
+            </div>
+          </td>
+          <td>{{ patient.category }}</td>
+          <td>{{ patient.appointmentTime }}</td>
+          <td class="actions">
+            <button class="action-btn view" (click)="viewPatient(patient)">
+              <i class="fas fa-user-circle"></i>
+            </button>
+            <button class="action-btn delete" (click)="deletePatient(patient)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-footer">
+    <div class="showing-entries">
+      Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to 
+      {{ Math.min(currentPage * itemsPerPage, filteredPatients.length) }} 
+      of {{ filteredPatients.length }} entries
+    </div>
+    <div class="pagination">
+      <button [disabled]="currentPage === 1" (click)="onPageChange(currentPage - 1)">
+        Previous
+      </button>
+      <button *ngFor="let page of [].constructor(totalPages); let i = index"
+              [class.active]="currentPage === i + 1"
+              (click)="onPageChange(i + 1)">
+        {{ i + 1 }}
+      </button>
+      <button [disabled]="currentPage === totalPages" (click)="onPageChange(currentPage + 1)">
+        Next
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Patient Modal -->
+<div class="modal-backdrop" *ngIf="showAddModal" (click)="closeAddModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Add New Patient</h2>
+      <button class="close-btn" (click)="closeAddModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-content">
+        <!-- Left Section -->
+        <div class="left-section">
+          <div class="profile-section">
+            <div class="profile-logo">
+              <span>{{ getInitials(newPatient.firstName, newPatient.lastName) }}</span>
+            </div>
+            <div class="profile-name">
+              {{ newPatient.firstName }} {{ newPatient.lastName }}
+            </div>
+          </div>
+          <div class="nav-buttons">
+            <button 
+              [class.active]="activeSection === 'personal'"
+              (click)="setActiveSection('personal')">
+              <i class="fas fa-user"></i>
+              Personal Information
+            </button>
+            <button 
+              [class.active]="activeSection === 'invoice'"
+              (click)="setActiveSection('invoice')">
+              <i class="fas fa-file-invoice"></i>
+              E-Invoice
+            </button>
+            <button 
+              [class.active]="activeSection === 'forms'"
+              (click)="setActiveSection('forms')">
+              <i class="fas fa-file-alt"></i>
+              E-Forms
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="right-section">
+          <!-- Personal Information Section -->
+          <div *ngIf="activeSection === 'personal'" class="section-content">
+            <div class="section-header">
+              <h3>Personal Information</h3>
+              <button class="btn btn-secondary scanner-btn">
+                <i class="fas fa-id-card"></i> Add via IC Scanner
+              </button>
+            </div>
+
+            <div class="passport-check">
+              <div class="checkbox-group">
+                <input type="checkbox" id="hasPassport" [(ngModel)]="newPatient.hasPassport" name="hasPassport">
+                <label for="hasPassport">Customer has a Passport instead of a local Identification Card</label>
+              </div>
+            </div>
+
+            <div class="two-column-layout">
+              <div class="column">
+                <div class="form-group">
+                  <label for="country">Country of Origin *</label>
+                  <input type="text" id="country" [(ngModel)]="newPatient.country" name="country" required>
+                  <div class="error-message" *ngIf="!newPatient.country">Error Message</div>
+                </div>
+
+                <div class="form-group">
+                  <label for="firstName">First Name *</label>
+                  <input type="text" id="firstName" [(ngModel)]="newPatient.firstName" name="firstName" required>
+                  <div class="error-message" *ngIf="!newPatient.firstName">Error Message</div>
+                </div>
+
+                <div class="form-group">
+                  <label for="lastName">Last Name *</label>
+                  <input type="text" id="lastName" [(ngModel)]="newPatient.lastName" name="lastName" required>
+                  <div class="error-message" *ngIf="!newPatient.lastName">Error Message</div>
+                </div>
+
+                <div class="form-group">
+                  <label for="idNumber">Identification Number *</label>
+                  <input type="text" id="idNumber" [(ngModel)]="newPatient.idNumber" name="idNumber" required>
+                  <div class="error-message" *ngIf="!newPatient.idNumber">Error Message</div>
+                </div>
+
+                <div class="form-group">
+                  <label for="email">Email Address</label>
+                  <input type="email" id="email" [(ngModel)]="newPatient.email" name="email">
+                </div>
+              </div>
+
+              <div class="column">
+                <div class="form-group">
+                  <label for="dob">Date of Birth</label>
+                  <input type="date" id="dob" [(ngModel)]="newPatient.dateOfBirth" name="dateOfBirth">
+                </div>
+
+                <div class="form-group">
+                  <label>Gender</label>
+                  <div class="radio-group">
+                    <label>
+                      <input type="radio" [(ngModel)]="newPatient.gender" name="gender" value="Male">
+                      Male
+                    </label>
+                    <label>
+                      <input type="radio" [(ngModel)]="newPatient.gender" name="gender" value="Female">
+                      Female
+                    </label>
+                    <label>
+                      <input type="radio" [(ngModel)]="newPatient.gender" name="gender" value="Others">
+                      Others
+                    </label>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="salutation">Salutation</label>
+                  <select id="salutation" [(ngModel)]="newPatient.salutation" name="salutation">
+                    <option value="Mr">Mr</option>
+                    <option value="Mrs">Mrs</option>
+                    <option value="Ms">Ms</option>
+                    <option value="Dr">Dr</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="contact1">Contact Number 1 *</label>
+                  <input type="tel" id="contact1" [(ngModel)]="newPatient.contact1" name="contact1" required>
+                  <div class="error-message" *ngIf="!newPatient.contact1">Error Message</div>
+                </div>
+
+                <div class="form-group">
+                  <label for="contact2">Contact Number 2</label>
+                  <input type="tel" id="contact2" [(ngModel)]="newPatient.contact2" name="contact2">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- E-Invoice Section -->
+          <div *ngIf="activeSection === 'invoice'" class="section-content">
+            <div class="section-header">
+              <h3>E-Invoice</h3>
+            </div>
+
+            <div class="invoice-options">
+              <div class="option-group">
+                <div class="checkbox-group">
+                  <input type="checkbox" id="useExistingId" [(ngModel)]="newPatient.useExistingId" name="useExistingId">
+                  <label for="useExistingId">Use Customer's existing Identification</label>
+                </div>
+              </div>
+
+              <div class="option-group">
+                <div class="checkbox-group">
+                  <input type="checkbox" id="useConsolidatedInvoice" [(ngModel)]="newPatient.useConsolidatedInvoice" name="useConsolidatedInvoice">
+                  <label for="useConsolidatedInvoice">Use Consolidated e-Invoice</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="identification-section">
+              <div class="form-group">
+                <label for="idType">Identification Type</label>
+                <select id="idType" [(ngModel)]="newPatient.idType" name="idType" class="select-field">
+                  <option value="">Select</option>
+                  <option value="passport">Passport</option>
+                  <option value="nationalId">National ID</option>
+                  <option value="drivingLicense">Driving License</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="idNumber">Identification #</label>
+                <input type="text" id="idNumber" [(ngModel)]="newPatient.idNumber" name="idNumber" class="input-field">
+              </div>
+
+              <div class="form-group">
+                <label for="tin">Tax Identification #(TIN)</label>
+                <div class="tin-input">
+                  <input type="text" id="tin" [(ngModel)]="newPatient.tin" name="tin" class="input-field">
+                  <button class="btn btn-secondary">
+                    <i class="fas fa-search"></i> Get TIN
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- E-Forms Section -->
+          <div *ngIf="activeSection === 'forms'" class="section-content">
+            <h3>E-Forms</h3>
+            <div class="table-controls">
+              <div class="entries-info">
+                Show
+                <select [(ngModel)]="formsPerPage">
+                  <option [value]="10">10</option>
+                  <option [value]="25">25</option>
+                  <option [value]="50">50</option>
+                </select>
+                entries
+              </div>
+              <div class="search-box">
+                <label for="formSearch">Search:</label>
+                <input type="text" id="formSearch" [(ngModel)]="formSearchText" placeholder="Search...">
+              </div>
+            </div>
+
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Sl No</th>
+                    <th>Form Name</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let form of paginatedForms; let i = index">
+                    <td>{{ (currentFormPage - 1) * formsPerPage + i + 1 }}</td>
+                    <td>{{ form.name }}</td>
+                    <td class="actions">
+                      <button class="action-btn toggle" [class.active]="form.isSelected" (click)="toggleForm(form)">
+                        <i class="fas" [class.fa-check]="form.isSelected" [class.fa-times]="!form.isSelected"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="table-footer">
+              <div class="showing-entries">
+                Showing {{ (currentFormPage - 1) * formsPerPage + 1 }} to 
+                {{ Math.min(currentFormPage * formsPerPage, filteredForms.length) }} 
+                of {{ filteredForms.length }} entries
+              </div>
+              <div class="pagination">
+                <button [disabled]="currentFormPage === 1" (click)="onFormPageChange(currentFormPage - 1)">
+                  Previous
+                </button>
+                <button *ngFor="let page of [].constructor(totalFormPages); let i = index"
+                        [class.active]="currentFormPage === i + 1"
+                        (click)="onFormPageChange(i + 1)">
+                  {{ i + 1 }}
+                </button>
+                <button [disabled]="currentFormPage === totalFormPages" (click)="onFormPageChange(currentFormPage + 1)">
+                  Next
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div class="footer-buttons">
+          <button type="button" class="btn btn-secondary" (click)="resetForm()">
+            <i class="fas fa-undo"></i> Reset
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="closeAddModal()">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+          <button type="button" class="btn btn-primary" (click)="submitForm()">
+            <i class="fas fa-check"></i> Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- View Patient Modal -->
+<div class="modal-backdrop" *ngIf="showViewModal" (click)="closeViewModal()">
+  <div class="modal view-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Patient Details</h2>
+      <button class="close-btn" (click)="closeViewModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="patient-details">
+        <div class="detail-row">
+          <div class="detail-item">
+            <label>Name</label>
+            <span>{{ selectedPatient?.name }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Age</label>
+            <span>{{ selectedPatient?.age }}</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-item">
+            <label>Phone Number</label>
+            <span>{{ selectedPatient?.phoneNumber }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Booking ID</label>
+            <span>{{ selectedPatient?.bookingId }}</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-item">
+            <label>Waiting No</label>
+            <span>{{ selectedPatient?.waitingNo }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Status</label>
+            <span class="status-badge" [style.background-color]="getStatusBgColor(selectedPatient?.status)" [style.color]="getStatusColor(selectedPatient?.status)">
+              <i [class]="'fas ' + getStatusIcon(selectedPatient?.status)"></i>
+              {{ selectedPatient?.status }}
+            </span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-item">
+            <label>Category</label>
+            <span>{{ selectedPatient?.category }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Appointment Time</label>
+            <span>{{ selectedPatient?.appointmentTime }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-backdrop" *ngIf="showDeleteModal" (click)="closeDeleteModal()">
+  <div class="modal delete-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Delete Patient</h2>
+      <button class="close-btn" (click)="closeDeleteModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="delete-confirmation">
+        <div class="warning-icon">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <p>Are you sure you want to delete this patient?</p>
+        <p class="patient-name">{{ patientToDelete?.name }}</p>
+        <div class="delete-actions">
+          <button class="btn btn-secondary" (click)="closeDeleteModal()">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+          <button class="btn btn-danger" (click)="confirmDelete()">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
