@@ -186,22 +186,19 @@ th {
   font-size: 1rem;
 }
 
-.action-btn.view {
-  background: none;
+.action-btn.view, .action-btn.edit {
+  background: none !important;
   color: #406e8d;
-  padding: 0;
-  border: none;
-  cursor: pointer;
-  transition: color 0.2s;
 }
 
-.action-btn.view:hover {
+.action-btn.view:hover, .action-btn.edit:hover {
   color: #345a75;
-  transform: scale(1.05);
+  background: none;
 }
 
-.action-btn.view i {
-  font-size: 18px;
+.action-btn.view i, .action-btn.edit i {
+  font-size: 1rem;
+  color: #406e8d;
 }
 
 .action-btn.delete {
@@ -360,6 +357,7 @@ th {
   cursor: pointer;
   border-radius: 6px;
   transition: all 0.2s;
+  position: relative;
 }
 
 .nav-buttons button:hover {
@@ -375,6 +373,54 @@ th {
 .nav-buttons button i {
   width: 20px;
   text-align: center;
+}
+
+/* Hide text when navigation is collapsed */
+.nav-buttons.collapsed button span {
+  display: none;
+}
+
+/* Tooltip styles for collapsed navigation */
+.nav-buttons.collapsed button::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #1e293b;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s;
+  z-index: 1000;
+  margin-left: 8px;
+  pointer-events: none;
+}
+
+.nav-buttons.collapsed button::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-right-color: #1e293b;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s;
+  z-index: 1000;
+  margin-left: -4px;
+  pointer-events: none;
+}
+
+.nav-buttons.collapsed button:hover::before,
+.nav-buttons.collapsed button:hover::after {
+  opacity: 1;
+  visibility: visible;
 }
 
 /* Right Section */
@@ -642,9 +688,17 @@ td {
 }
 
 .modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 16px 24px;
   border-top: 1px solid #e2e8f0;
   margin-top: 24px;
+}
+
+.modal-footer .right-buttons {
+  display: flex;
+  gap: 12px;
 }
 
 .footer-buttons {
@@ -872,4 +926,25 @@ td {
 
 .btn-danger:hover {
   background-color: #b91c1c;
+}
+
+.action-btn.edit {
+  background: none !important;
+  color: #406e8d;
+  font-size: 1.25rem;
+  border-radius: 50%;
+  border: none;
+  transition: box-shadow 0.2s, background 0.2s;
+  outline: none;
+}
+
+.action-btn.edit i {
+  color: #406e8d;
+  font-size: 1.25rem;
+}
+
+.action-btn.edit:hover,
+.action-btn.edit:focus {
+  background: #e0e7ef;
+  box-shadow: 0 0 0 2px #406e8d22;
 } 

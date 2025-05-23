@@ -87,19 +87,19 @@ import { ProfileComponent } from '../profile/profile.component';
         <div class="menu-title" *ngIf="sidebarOpen">MAIN NAVIGATION</div>
         <ul class="menu-list">
           <li>
-            <button class="menu-item" routerLink="/admin/dashboard" routerLinkActive="active">
+            <button class="menu-item" routerLink="/admin/dashboard" routerLinkActive="active" data-tooltip="Dashboard">
               <i class="fas fa-dashboard"></i>
               <span class="menu-text" *ngIf="sidebarOpen">Dashboard</span>
             </button>
           </li>
           <li>
-            <button class="menu-item" routerLink="/admin/users" routerLinkActive="active">
+            <button class="menu-item" routerLink="/admin/users" routerLinkActive="active" data-tooltip="Users">
               <i class="fas fa-users"></i>
               <span class="menu-text" *ngIf="sidebarOpen">Users</span>
             </button>
           </li>
           <li>
-            <button class="menu-item" routerLink="/admin/settings" routerLinkActive="active">
+            <button class="menu-item" routerLink="/admin/settings" routerLinkActive="active" data-tooltip="Settings">
               <i class="fas fa-cog"></i>
               <span class="menu-text" *ngIf="sidebarOpen">Settings</span>
             </button>
@@ -504,6 +504,37 @@ import { ProfileComponent } from '../profile/profile.component';
 
     .menu-item.active i {
       color: #FFFFFF !important;
+    }
+
+    .sidebar-closed .menu-item .menu-text {
+      display: none;
+    }
+
+    .sidebar-closed .menu-item {
+      position: relative;
+    }
+
+    .sidebar-closed .menu-item::before {
+      content: attr(data-tooltip);
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #1e293b;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      margin-left: 8px;
+      z-index: 1000;
+    }
+
+    .sidebar-closed .menu-item:hover::before {
+      opacity: 1;
     }
 
     /* Main Content Styles */
@@ -1071,7 +1102,7 @@ export class AdminLayoutComponent {
   }
 
   navigateToProfile() {
-    this.router.navigate(['/profile']);
+    this.router.navigate(['/admin/profile']);
     this.showProfile = false;
   }
 

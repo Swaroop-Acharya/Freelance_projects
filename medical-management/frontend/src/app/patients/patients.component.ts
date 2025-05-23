@@ -157,6 +157,12 @@ export class PatientsComponent implements OnInit {
   showDeleteModal = false;
   patientToDelete: Patient | null = null;
 
+  isNavCollapsed = false;
+
+  showEditModal = false;
+  editPatient: Patient | null = null;
+  originalEditPatient: Patient | null = null;
+
   get filteredPatients(): Patient[] {
     return this.patients.filter(patient => 
       patient.name.toLowerCase().includes(this.searchText.toLowerCase()) ||
@@ -379,6 +385,34 @@ export class PatientsComponent implements OnInit {
       }
     }
     this.closeDeleteModal();
+  }
+
+  openEditModal(patient: Patient) {
+    this.editPatient = { ...patient };
+    this.originalEditPatient = { ...patient };
+    this.showEditModal = true;
+  }
+
+  resetEditPatient() {
+    if (this.originalEditPatient && this.editPatient) {
+      Object.assign(this.editPatient, this.originalEditPatient);
+    }
+  }
+
+  closeEditModal() {
+    this.showEditModal = false;
+    this.editPatient = null;
+    this.originalEditPatient = null;
+  }
+
+  updatePatient() {
+    if (this.editPatient) {
+      const index = this.patients.findIndex(p => p.id === this.editPatient!.id);
+      if (index !== -1) {
+        this.patients[index] = { ...this.editPatient };
+      }
+      this.closeEditModal();
+    }
   }
 
   ngOnInit() {

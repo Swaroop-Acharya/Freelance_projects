@@ -15,31 +15,31 @@
       <div class="menu-title" *ngIf="sidebarOpen">MAIN NAVIGATION</div>
       <ul class="menu-list">
         <li>
-          <button class="menu-item" (click)="setTab('dashboard')">
+          <button class="menu-item" (click)="setTab('dashboard')" data-tooltip="Dashboard">
             <i class="fas fa-dashboard"></i>
             <span class="menu-text" *ngIf="sidebarOpen">Dashboard</span>
           </button>
         </li>
         <li>
-          <button class="menu-item" (click)="setTab('doctor-schedules')">
+          <button class="menu-item" (click)="setTab('doctor-schedules')" data-tooltip="Doctor Schedules">
             <i class="fas fa-user-md"></i>
             <span class="menu-text" *ngIf="sidebarOpen">Doctor Schedules</span>
           </button>
         </li>
         <li>
-          <button class="menu-item" (click)="setTab('patients')">
+          <button class="menu-item" (click)="setTab('patients')" data-tooltip="Patients">
             <i class="fas fa-user"></i>
             <span class="menu-text" *ngIf="sidebarOpen">Patients</span>
           </button>
         </li>
         <li>
-          <button class="menu-item" (click)="setTab('appointments')">
+          <button class="menu-item" (click)="setTab('appointments')" data-tooltip="Appointments">
             <i class="fas fa-calendar"></i>
             <span class="menu-text" *ngIf="sidebarOpen">Appointments</span>
           </button>
         </li>
         <li>
-          <button class="menu-item" (click)="setTab('billing')">
+          <button class="menu-item" (click)="setTab('billing')" data-tooltip="Billing">
             <i class="fas fa-file-text"></i>
             <span class="menu-text" *ngIf="sidebarOpen">Billing</span>
           </button>
