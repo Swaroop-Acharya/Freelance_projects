@@ -33,6 +33,12 @@ public class BillingRecordService {
         BillingRecord billingRecord = billingRecordRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Billing record not found"));
         billingRecord.setPatientName(billingRecordRequest.patientName());
+        billingRecord.setDate(billingRecordRequest.date());
+        billingRecord.setAmount(billingRecordRequest.amount());
+        billingRecord.setPaymentStatus(billingRecordRequest.paymentStatus());
+        billingRecord.setPaymentMethod(billingRecordRequest.paymentMethod());
+        billingRecord.setDescription(billingRecordRequest.description());
+        billingRecord.setDoctor(billingRecordRequest.doctor());
         return billingRecordRepository.save(billingRecord);
     }
     public void deleteBillingRecord(Long id) {

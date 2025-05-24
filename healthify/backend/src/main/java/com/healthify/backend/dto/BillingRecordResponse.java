@@ -3,8 +3,8 @@ package com.healthify.backend.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.healthify.backend.model.PaymentMethod;
-import com.healthify.backend.model.PaymentStatus;
+import com.healthify.backend.enums.PaymentMethod;
+import com.healthify.backend.enums.PaymentStatus;
 
 public record BillingRecordResponse(
     Long billId,
