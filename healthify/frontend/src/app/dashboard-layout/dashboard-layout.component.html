@@ -2,9 +2,9 @@
     <!-- Sidebar -->
     <div class="sidebar" [class.sidebar-closed]="!sidebarOpen">
       <div class="user-profile">
-        <div class="user-avatar">SU</div>
+        <div class="user-avatar">{{getInitials(userProfile.fullName)}}</div>
         <div class="user-info" *ngIf="sidebarOpen">
-          <div class="user-name">Sunanda</div>
+          <div class="user-name">{{userProfile.fullName}}</div>
           <div class="availability">
             <span class="status-dot"></span>
             Available
@@ -75,17 +75,17 @@
           <!-- Profile Dropdown -->
           <div class="profile-dropdown">
             <button class="profile-button" (click)="toggleProfileDropdown()">
-              <div class="profile-initials">{{ userProfile.initials }}</div>
+              <div class="profile-initials">{{ getInitials(userProfile.fullName) }}</div>
             </button>
             
             <!-- Dropdown Menu -->
             <div class="dropdown-menu" *ngIf="showProfileDropdown">
               <div class="profile-info">
-                <div class="profile-avatar">{{ userProfile.initials }}</div>
+                <div class="profile-avatar">{{ getInitials(userProfile.fullName) }}</div>
                 <div class="profile-details">
-                  <div class="profile-name">{{ userProfile.name }}</div>
-                  <div class="profile-title">{{ userProfile.title }}</div>
-                  <div class="member-since">Member since {{ userProfile.memberSince }}</div>
+                  <div class="profile-name">{{ userProfile.fullName }}</div>
+                  <div class="profile-title">{{ userProfile.roleName }}</div>
+                  <div class="member-since">Employee Code: {{ userProfile.employeeCode }}</div>
                 </div>
               </div>
               

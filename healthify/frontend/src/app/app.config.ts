@@ -4,10 +4,14 @@ import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpRequest, HttpHandlerFn } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { StorageService } from './services/storage.service';
 
 // Auth interceptor function
 function authInterceptor(req: HttpRequest<any>, next: HttpHandlerFn) {
-  const token = localStorage.getItem('token');
+  const storageService = inject(StorageService);
+  const token = storageService.getItem('token');
+  
   if (token) {
     const cloned = req.clone({
       headers: req.headers.set('Authorization', `Bearer ${token}`)
@@ -19,11 +23,9 @@ function authInterceptor(req: HttpRequest<any>, next: HttpHandlerFn) {
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }), 
-    provideRouter(routes), 
+    provideRouter(routes),
     provideClientHydration(withEventReplay()),
-    provideHttpClient(
-      withInterceptors([authInterceptor])
-    )
+    provideHttpClient(withInterceptors([authInterceptor])),
+    provideZoneChangeDetection({ eventCoalescing: true })
   ]
 };

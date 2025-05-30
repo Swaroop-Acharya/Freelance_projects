@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
+import { StorageService } from '../services/storage.service';
 
 @Component({
   selector: 'app-login',
@@ -335,9 +336,13 @@ export class LoginComponent {
   rememberMe: boolean = true;
   private baseUrl = 'http://localhost:8081/auth';
 
-  constructor(private router: Router, private http: HttpClient) {
+  constructor(
+    private router: Router, 
+    private http: HttpClient,
+    private storageService: StorageService
+  ) {
     // Check if already logged in
-    if (localStorage.getItem('token')) {
+    if (this.storageService.getItem('token')) {
       this.router.navigate(['/dashboard/overview']);
     }
   }
@@ -354,7 +359,7 @@ export class LoginComponent {
         .set('Accept', 'application/json');
       
       const loginData = {
-        username: username, // Use the extracted username
+        username: username,
         password: this.password
       };
 
@@ -363,13 +368,13 @@ export class LoginComponent {
       this.http.post<any>(`${this.baseUrl}/login`, loginData, { 
         headers, 
         observe: 'response',
-        responseType: 'text' as 'json' // The backend returns a plain text token
+        responseType: 'text' as 'json'
       }).subscribe({
         next: (response) => {
           console.log('Login response:', response);
           if (response.body) {
-            // Store the token in localStorage
-            localStorage.setItem('token', response.body);
+            // Store the token using StorageService
+            this.storageService.setItem('token', response.body);
             
             // Navigate to dashboard/overview
             this.router.navigate(['/dashboard/overview']);

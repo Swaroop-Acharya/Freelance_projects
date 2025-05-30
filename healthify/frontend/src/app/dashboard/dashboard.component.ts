@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http';
+import { StorageService } from '../services/storage.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -32,14 +33,17 @@ export class DashboardComponent implements OnInit {
     }
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private storageService: StorageService
+  ) {}
 
   ngOnInit() {
     this.fetchDashboardData();
   }
 
   private getHeaders() {
-    const token = localStorage.getItem('token');
+    const token = this.storageService.getItem('token');
     return new HttpHeaders().set('Authorization', `Bearer ${token}`);
   }
 

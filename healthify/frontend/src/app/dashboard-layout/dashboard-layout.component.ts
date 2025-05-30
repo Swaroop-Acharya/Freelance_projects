@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -9,7 +9,17 @@ import { AppointmentsComponent } from '../appointments/appointments.component';
 import { ProfileViewComponent } from '../profile-view/profile-view.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 import { BillingComponent } from '../billing/billing.component';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { StorageService } from '../services/storage.service';
+
+interface UserProfile {
+  fullName: string;
+  employeeCode: string;
+  email: string;
+  roleName: string;
+  oldPassword: string | null;
+  newPassword: string | null;
+}
 
 @Component({
   selector: 'app-dashboard-layout',
@@ -28,7 +38,7 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './dashboard-layout.component.html',
   styleUrls: ['./dashboard-layout.component.css']
 })
-export class DashboardLayoutComponent {
+export class DashboardLayoutComponent implements OnInit {
   sidebarOpen = false;
   activeTab = 'dashboard';
   showProfileDropdown = false;
@@ -36,20 +46,48 @@ export class DashboardLayoutComponent {
   showNotifications = false;
   unreadNotifications = 5;
   currentRoute = '';
-  private baseUrl = 'http://localhost:8081/auth';
-  userProfile = {
-    initials: 'AK',
-    name: 'Alexander Pierce',
-    title: 'Plant Engineer',
-    memberSince: 'Nov 2022'
+  private baseUrl = 'http://localhost:8081';
+  userProfile: UserProfile = {
+    fullName: '',
+    employeeCode: '',
+    email: '',
+    roleName: '',
+    oldPassword: null,
+    newPassword: null
   };
 
-  constructor(private router: Router, private http: HttpClient) {
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private storageService: StorageService
+  ) {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
       this.currentRoute = event.url;
     });
+  }
+
+  ngOnInit() {
+    this.fetchUserProfile();
+  }
+
+  private getHeaders() {
+    const token = this.storageService.getItem('token');
+    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  }
+
+  fetchUserProfile() {
+    const headers = this.getHeaders();
+    this.http.get<UserProfile>(`${this.baseUrl}/nurse/profile`, { headers })
+      .subscribe({
+        next: (profile) => {
+          this.userProfile = profile;
+        },
+        error: (error) => {
+          console.error('Error fetching user profile:', error);
+        }
+      });
   }
 
   isProfileOrChangePasswordRoute(): boolean {
@@ -94,19 +132,19 @@ export class DashboardLayoutComponent {
   }
 
   signOut() {
-    const token = localStorage.getItem('token');
+    const token = this.storageService.getItem('token');
     if (token) {
       // Call the backend logout endpoint
-      this.http.post(`${this.baseUrl}/logout`, {}, {
+      this.http.post(`${this.baseUrl}/auth/logout`, {}, {
         headers: { 'Authorization': `Bearer ${token}` }
       }).subscribe({
         next: () => {
-          localStorage.removeItem('token');
+          this.storageService.removeItem('token');
           this.router.navigate(['/login']);
         },
         error: () => {
           // Even if the backend call fails, we should still clear local storage and redirect
-          localStorage.removeItem('token');
+          this.storageService.removeItem('token');
           this.router.navigate(['/login']);
         }
       });
@@ -119,5 +157,13 @@ export class DashboardLayoutComponent {
 
   goBack() {
     this.showProfileView = false;
+  }
+
+  getInitials(name: string): string {
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase();
   }
 }
