@@ -22,7 +22,7 @@ import { CommonModule } from '@angular/common';
         <div class="profile-details">
           <div class="detail-item">
             <label>Name</label>
-            <div class="value">Alexander ahfaf Pierce</div>
+            <div class="value">Nurse</div>
           </div>
 
           <div class="detail-item">

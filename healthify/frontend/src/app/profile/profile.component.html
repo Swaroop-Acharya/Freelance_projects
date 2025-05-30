@@ -7,32 +7,32 @@
   </div>
   <div class="profile-body">
     <div class="profile-avatar">
-      <div class="avatar-circle">AK</div>
+      <div class="avatar-circle">{{getInitials(userProfile.fullName)}}</div>
     </div>
     <div class="profile-info">
       <div class="info-group">
         <label>Name</label>
-        <p>Alexander Pierce</p>
+        <p>{{userProfile.fullName}}</p>
       </div>
       <div class="info-group">
         <label>Phone Number</label>
-        <p>XXXXXXXXX</p>
+        <p>{{userProfile.phoneNumber}}</p>
       </div>
       <div class="info-group">
         <label>Email</label>
-        <p>alexanderpierce&#64;gmail.com</p>
+        <p>{{userProfile.email}}</p>
       </div>
       <div class="info-group">
         <label>Employee Code</label>
-        <p>EMP00445</p>
+        <p>{{userProfile.employeeCode}}</p>
       </div>
       <div class="info-group">
         <label>Designation</label>
-        <p>Plant Engineer</p>
+        <p>{{userProfile.roleName}}</p>
       </div>
       <div class="info-group">
         <label>Location</label>
-        <p>Malaysia</p>
+        <p>{{userProfile.location}}</p>
       </div>
     </div>
   </div>

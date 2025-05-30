@@ -46,7 +46,7 @@ import { ProfileComponent } from '../profile/profile.component';
               <div class="profile-info">
                 <div class="profile-avatar">AP</div>
                 <div class="profile-details">
-                  <div class="profile-name">Alexander Pierce</div>
+                  <div class="profile-name">Nurse</div>
                   <div class="profile-title">Plant Engineer</div>
                   <div class="member-since">Member since Nov 2022</div>
                 </div>
