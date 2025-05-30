@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, HttpClientModule],
   template: `
     <div class="wrapper master-flex-align">
       <div class="coverpage_mask"></div>
@@ -332,13 +333,62 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
   rememberMe: boolean = true;
+  private baseUrl = 'http://localhost:8081/auth';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private http: HttpClient) {
+    // Check if already logged in
+    if (localStorage.getItem('token')) {
+      this.router.navigate(['/dashboard/overview']);
+    }
+  }
 
   onSubmit() {
     if (this.email && this.password) {
-      // TODO: Implement actual login logic
-      this.router.navigate(['/admin/dashboard']);
+      // Extract username from email if it contains @
+      const username = this.email.includes('@') ? this.email.split('@')[0] : this.email;
+      
+      console.log('Attempting login with:', { username });
+      
+      const headers = new HttpHeaders()
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json');
+      
+      const loginData = {
+        username: username, // Use the extracted username
+        password: this.password
+      };
+
+      console.log('Sending login request:', loginData);
+      
+      this.http.post<any>(`${this.baseUrl}/login`, loginData, { 
+        headers, 
+        observe: 'response',
+        responseType: 'text' as 'json' // The backend returns a plain text token
+      }).subscribe({
+        next: (response) => {
+          console.log('Login response:', response);
+          if (response.body) {
+            // Store the token in localStorage
+            localStorage.setItem('token', response.body);
+            
+            // Navigate to dashboard/overview
+            this.router.navigate(['/dashboard/overview']);
+          } else {
+            console.error('No token received in response');
+            alert('Login failed: No authentication token received');
+          }
+        },
+        error: (error) => {
+          console.error('Login error:', error);
+          if (error.status === 401) {
+            alert(error.error || 'Invalid username or password. Please check your credentials and try again.');
+          } else {
+            alert(`Login failed: ${error.error || 'An unknown error occurred'}`);
+          }
+        }
+      });
+    } else {
+      alert('Please enter both email and password');
     }
   }
 } 

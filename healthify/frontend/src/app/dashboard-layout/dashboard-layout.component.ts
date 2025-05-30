@@ -9,6 +9,7 @@ import { AppointmentsComponent } from '../appointments/appointments.component';
 import { ProfileViewComponent } from '../profile-view/profile-view.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 import { BillingComponent } from '../billing/billing.component';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-dashboard-layout',
@@ -35,6 +36,7 @@ export class DashboardLayoutComponent {
   showNotifications = false;
   unreadNotifications = 5;
   currentRoute = '';
+  private baseUrl = 'http://localhost:8081/auth';
   userProfile = {
     initials: 'AK',
     name: 'Alexander Pierce',
@@ -42,7 +44,7 @@ export class DashboardLayoutComponent {
     memberSince: 'Nov 2022'
   };
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private http: HttpClient) {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
@@ -92,7 +94,26 @@ export class DashboardLayoutComponent {
   }
 
   signOut() {
-    console.log('Sign out');
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Call the backend logout endpoint
+      this.http.post(`${this.baseUrl}/logout`, {}, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      }).subscribe({
+        next: () => {
+          localStorage.removeItem('token');
+          this.router.navigate(['/login']);
+        },
+        error: () => {
+          // Even if the backend call fails, we should still clear local storage and redirect
+          localStorage.removeItem('token');
+          this.router.navigate(['/login']);
+        }
+      });
+    } else {
+      // If no token exists, just redirect to login
+      this.router.navigate(['/login']);
+    }
     this.showProfileDropdown = false;
   }
 
