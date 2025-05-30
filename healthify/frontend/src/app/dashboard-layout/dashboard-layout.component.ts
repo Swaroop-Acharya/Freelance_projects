@@ -85,7 +85,7 @@ export class DashboardLayoutComponent implements OnInit {
         error: (error) => {
           console.error('Error fetching user profile:', error);
         }
-      });
+    });
   }
 
   isProfileOrChangePasswordRoute(): boolean {

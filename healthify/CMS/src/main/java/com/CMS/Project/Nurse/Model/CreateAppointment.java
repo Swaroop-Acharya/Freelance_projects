@@ -14,22 +14,29 @@ import java.time.LocalTime;
 public class CreateAppointment {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String patientName;
     private int age;
     private String bookingID;
+
     @OneToOne
     @JoinColumn(name = "phNo", referencedColumnName = "contact_number1")
     private RegisterPatient phoneNumber;
+
     private LocalDateTime appointmentDateTime;
     private LocalTime duration;
+
     @ManyToOne
     @JoinColumn(name = "doctor_id", referencedColumnName = "user_id")
     private User doctor;
+
     @Enumerated(EnumType.STRING)
     private AppointmentTypes appointmentTypes;
+
     private String purpose;
+
     @Enumerated(EnumType.STRING)
     private PatientStatus status;
-
 }

@@ -1,14 +1,12 @@
 .appointments-container {
-  padding: 2rem;
-  background-color: #f9fafb;
-  min-height: 100vh;
+  padding: 20px;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 20px;
 }
 
 .header h1 {
@@ -18,29 +16,26 @@
 }
 
 .add-appointment-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background-color: #16a34a;
+  background-color: #4CAF50;
   color: white;
   border: none;
-  border-radius: 2rem;
-  font-size: 0.875rem;
-  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .add-appointment-btn:hover {
-  background-color: #15803d;
+  background-color: #45a049;
 }
 
 .table-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 20px;
 }
 
 .entries-info {
@@ -51,10 +46,10 @@
 }
 
 .entries-info select {
-  padding: 0.375rem 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  background-color: white;
+  margin: 0 8px;
+  padding: 4px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
 .search-box {
@@ -64,150 +59,113 @@
 }
 
 .search-box input {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   width: 200px;
 }
 
 .table-container {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow-x: auto;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  margin-bottom: 20px;
 }
 
 th, td {
-  padding: 1rem;
+  padding: 12px;
   text-align: left;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #ddd;
 }
 
 th {
-  background-color: #f9fafb;
+  background-color: #f8f9fa;
   font-weight: 600;
-  color: #374151;
 }
 
 .actions {
   display: flex;
-  gap: 0.5rem;
-  justify-content: flex-start;
-  align-items: center;
-  min-width: 100px;
+  gap: 8px;
 }
 
 .action-btn {
-  padding: 0.5rem;
+  background: none;
   border: none;
-  border-radius: 0.375rem;
   cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-}
-
-.action-btn i {
-  font-size: 1rem;
+  padding: 4px;
 }
 
 .action-btn.edit {
-  background-color: #e0f2fe;
-  color: #0369a1;
+  color: #007bff;
 }
 
 .action-btn.delete {
-  background-color: #fee2e2;
-  color: #dc2626;
-}
-
-.action-btn:hover {
-  opacity: 0.9;
-  transform: scale(1.05);
+  color: #dc3545;
 }
 
 .table-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1rem;
-  color: #6b7280;
 }
 
 .pagination {
   display: flex;
-  gap: 0.5rem;
+  gap: 4px;
 }
 
 .pagination button {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
   background-color: white;
-  color: #374151;
   cursor: pointer;
-  transition: all 0.2s;
-}
-
-.pagination button:hover:not(:disabled) {
-  background-color: #f3f4f6;
 }
 
 .pagination button.active {
-  background-color: #3b82f6;
+  background-color: #007bff;
   color: white;
-  border-color: #3b82f6;
+  border-color: #007bff;
 }
 
 .pagination button:disabled {
-  opacity: 0.5;
+  background-color: #f8f9fa;
   cursor: not-allowed;
 }
 
 /* Modal Backdrop */
 .modal-backdrop {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.4);
-  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 /* Modal Box */
 .modal {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-  max-width: 540px;
-  width: 100%;
-  padding: 0;
-  animation: fadeIn 0.2s;
-  display: flex;
-  flex-direction: column;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px);}
-  to { opacity: 1; transform: translateY(0);}
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 /* Modal Header */
 .modal-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 1.25rem 1.5rem 1rem 1.5rem;
-  border-bottom: 1px solid #eee;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 .modal-header h2 {
@@ -219,14 +177,9 @@ th {
 .close-btn {
   background: none;
   border: none;
-  font-size: 1.5rem;
-  color: #888;
+  font-size: 24px;
   cursor: pointer;
-  transition: color 0.2s;
-}
-
-.close-btn:hover {
-  color: #222;
+  color: #666;
 }
 
 /* Modal Body */
@@ -238,67 +191,267 @@ th {
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  margin-bottom: 15px;
 }
 
 .form-group label {
-  font-weight: 600;
-  color: #555;
-  font-size: 0.95rem;
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
 }
 
 .form-group input,
 .form-group select {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #d1d5db;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 1rem;
-  background: #f9fafb;
-  transition: border-color 0.2s;
 }
 
-.form-group input:focus,
+.form-group select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #000000;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+  -webkit-appearance: menulist;
+  -moz-appearance: menulist;
+  appearance: menulist;
+}
+
+.form-group select option {
+  background: #ffffff;
+  color: #000000;
+  padding: 8px;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+}
+
+/* Override any potential conflicting styles */
+#doctorId {
+  color: #000000 !important;
+  background: #ffffff !important;
+}
+
+#doctorId option {
+  color: #000000 !important;
+  background: #ffffff !important;
+  padding: 8px !important;
+}
+
+/* Style for the placeholder option */
+#doctorId option:first-child {
+  font-style: italic;
+  color: #666666 !important;
+}
+
+/* Remove any potential conflicting styles */
+.form-group select::-ms-value {
+  background: white;
+  color: black;
+}
+
+.form-group select::-webkit-select-placeholder {
+  color: black;
+}
+
+.form-group select:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 #000;
+}
+
+/* Style the dropdown arrow */
+.form-group select {
+  background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 30px;
+}
+
+/* Focus state */
 .form-group select:focus {
-  border-color: #406e8d;
   outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 /* Modal Footer */
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 1rem;
-  padding: 1rem 1.5rem 1.25rem 1.5rem;
-  border-top: 1px solid #eee;
+  gap: 10px;
+  margin-top: 20px;
 }
 
 .btn {
-  padding: 0.5rem 1.5rem;
+  padding: 8px 16px;
   border-radius: 4px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
   border: none;
-  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
 }
 
 .btn-primary {
-  background: #406e8d;
-  color: #fff;
-}
-
-.btn-primary:hover {
-  background: #345a77;
+  background-color: #007bff;
+  color: white;
 }
 
 .btn-secondary {
-  background: #f3f4f6;
-  color: #666;
-  border: 1px solid #ddd;
+  background-color: #6c757d;
+  color: white;
 }
 
-.btn-secondary:hover {
-  background: #e5e7eb;
+.error-message {
+  background-color: #fee2e2;
+  border: 1px solid #ef4444;
+  color: #991b1b;
+  padding: 12px;
+  border-radius: 4px;
+  margin: 10px 0;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.error-message::before {
+  content: '⚠️';
+}
+
+/* Dropdown specific styles */
+select#doctorId {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+select#doctorId option {
+  background-color: #ffffff;
+  color: #333;
+  padding: 12px;
+  font-size: 14px;
+}
+
+select#doctorId option:first-child {
+  color: #666;
+  font-style: italic;
+}
+
+select#doctorId:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Override any previous select styles */
+.form-group select {
+  background-color: #f8f9fa !important;
+  color: #333 !important;
+}
+
+.form-group select option {
+  background-color: #ffffff !important;
+  color: #333 !important;
+  padding: 12px;
+}
+
+/* Reset all previous select styles */
+.form-group select,
+.form-group select option,
+select#doctorId,
+select#doctorId option {
+  /* Reset to native appearance */
+  -webkit-appearance: menulist !important;
+  -moz-appearance: menulist !important;
+  appearance: menulist !important;
+  
+  /* Force maximum contrast */
+  background: white !important;
+  color: black !important;
+  
+  /* Basic sizing */
+  width: 100% !important;
+  padding: 8px !important;
+  margin: 4px 0 !important;
+  
+  /* Clear borders */
+  border: 2px solid #333 !important;
+  border-radius: 4px !important;
+  
+  /* Text properties */
+  font-size: 16px !important;
+  font-weight: normal !important;
+  font-family: Arial, sans-serif !important;
+  
+  /* Remove any transforms or filters */
+  transform: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* Ensure dropdown options are visible */
+.form-group select option,
+select#doctorId option {
+  padding: 8px !important;
+  background: white !important;
+  color: black !important;
+  font-size: 16px !important;
+  text-shadow: none !important;
+}
+
+/* Remove all previous select styles */
+.form-group select,
+select#doctorId {
+  display: block !important;
+  width: 100% !important;
+  height: 38px !important;
+  padding: 6px 12px !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #ced4da !important;
+  border-radius: 4px !important;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+  -webkit-appearance: listbox !important;
+  -moz-appearance: listbox !important;
+  appearance: listbox !important;
+}
+
+.form-group select option,
+select#doctorId option {
+  padding: 8px !important;
+  font-size: 14px !important;
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  display: block !important;
+}
+
+/* Style for the selected option */
+.form-group select option:checked,
+select#doctorId option:checked {
+  background-color: #e9ecef !important;
+  color: #000000 !important;
+}
+
+/* Remove any hover effects that might interfere with visibility */
+.form-group select:hover,
+select#doctorId:hover {
+  border-color: #80bdff !important;
+}
+
+/* Focus styles */
+.form-group select:focus,
+select#doctorId:focus {
+  border-color: #80bdff !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
 } 

@@ -7,40 +7,59 @@
   </div>
 
   <!-- Add Appointment Modal -->
-  <div class="modal-backdrop" *ngIf="showAddModal">
+  <div *ngIf="showAddModal" class="modal-backdrop">
     <div class="modal">
       <div class="modal-header">
-        <h2>Add Appointment</h2>
+        <h2>Add New Appointment</h2>
         <button class="close-btn" (click)="closeAddModal()">&times;</button>
       </div>
+      <div class="modal-body">
       <form (ngSubmit)="addAppointment()" #appointmentForm="ngForm">
-        <div class="modal-body">
           <div class="form-group">
-            <label>Booking ID</label>
-            <input type="text" [(ngModel)]="newAppointment.bookingId" name="bookingId" required />
+            <label for="bookingId">Booking ID*</label>
+            <input type="text" id="bookingId" name="bookingId" [(ngModel)]="newAppointment.bookingId" required>
           </div>
+
           <div class="form-group">
-            <label>Patient Name</label>
-            <input type="text" [(ngModel)]="newAppointment.patientName" name="patientName" required />
+            <label for="patientName">Patient Name*</label>
+            <input type="text" id="patientName" name="patientName" [(ngModel)]="newAppointment.patientName" required>
           </div>
+
           <div class="form-group">
-            <label>Date</label>
-            <input type="date" [(ngModel)]="newAppointment.date" name="date" required />
+            <label for="age">Age*</label>
+            <input type="number" id="age" name="age" [(ngModel)]="newAppointment.age" required>
           </div>
+
           <div class="form-group">
-            <label>Time</label>
-            <input type="time" [(ngModel)]="newAppointment.time" name="time" required />
+            <label for="phoneNumber">Phone Number*</label>
+            <input type="tel" id="phoneNumber" name="phoneNumber" [(ngModel)]="newAppointment.phoneNumber" required>
           </div>
+
           <div class="form-group">
-            <label>Purpose</label>
-            <select [(ngModel)]="newAppointment.purpose" name="purpose" required>
-              <option value="Consultation">Consultation</option>
-              <option value="Follow up">Follow up</option>
+            <label for="appointmentTime">Appointment Date & Time*</label>
+            <input type="datetime-local" id="appointmentTime" name="appointmentTime" [(ngModel)]="newAppointment.appointmentTime" required>
+          </div>
+
+          <div class="form-group">
+            <label for="appointmentType">Appointment Type*</label>
+            <select id="appointmentType" name="appointmentType" [(ngModel)]="newAppointment.appointmentType" required>
+              <option *ngFor="let type of appointmentTypes" [value]="type">{{type}}</option>
             </select>
           </div>
+
           <div class="form-group">
-            <label>Duration</label>
-            <select [(ngModel)]="newAppointment.duration" name="duration" required>
+            <label for="doctorId">Doctor*</label>
+            <select id="doctorId" name="doctorId" [(ngModel)]="newAppointment.doctorId" required>
+              <option [ngValue]="null">-- Select a Doctor --</option>
+              <option *ngFor="let doctor of doctors" [ngValue]="doctor.id">
+                Dr. {{ doctor.fullName || doctor.username }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="duration">Duration</label>
+            <select id="duration" name="duration" [(ngModel)]="newAppointment.duration" required>
               <option value="10 min">10 min</option>
               <option value="15 min">15 min</option>
               <option value="20 min">20 min</option>
@@ -49,25 +68,22 @@
               <option value="60 min">60 min</option>
             </select>
           </div>
+
           <div class="form-group">
-            <label>Type</label>
-            <select [(ngModel)]="newAppointment.type" name="type" required>
-              <option value="Appointment">Appointment</option>
-              <option value="Walk-in">Walk-in</option>
-            </select>
+            <label for="purpose">Purpose*</label>
+            <textarea id="purpose" name="purpose" [(ngModel)]="newAppointment.purpose" required style="border: 1px solid black;"></textarea>
           </div>
-          <div class="form-group">
-            <label>Doctor</label>
-            <select [(ngModel)]="newAppointment.doctor" name="doctor" required>
-              <option *ngFor="let doctor of doctors" [value]="doctor">{{ doctor }}</option>
-            </select>
-          </div>
+
+          <div *ngIf="error" class="error-message" role="alert">
+            {{error}}
         </div>
+
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="resetAppointmentForm()">Reset</button>
-          <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Create Appointment</button>
+            <button type="button" class="btn btn-secondary" (click)="closeAddModal()">Cancel</button>
         </div>
       </form>
+      </div>
     </div>
   </div>
 
@@ -98,7 +114,7 @@
           </div>
           <div class="form-group">
             <label>Purpose</label>
-            <select [(ngModel)]="selectedAppointment.purpose" name="purpose" required>
+            <select [(ngModel)]="selectedAppointment.purpose" name="purpose" required style="border: 1px solid black;">
               <option value="Consultation">Consultation</option>
               <option value="Follow up">Follow up</option>
             </select>
@@ -115,16 +131,11 @@
             </select>
           </div>
           <div class="form-group">
-            <label>Type</label>
-            <select [(ngModel)]="selectedAppointment.type" name="type" required>
-              <option value="Appointment">Appointment</option>
-              <option value="Walk-in">Walk-in</option>
-            </select>
-          </div>
-          <div class="form-group">
             <label>Doctor</label>
             <select [(ngModel)]="selectedAppointment.doctor" name="doctor" required>
-              <option *ngFor="let doctor of doctors" [value]="doctor">{{ doctor }}</option>
+              <option *ngFor="let doctor of doctors" [value]="doctor.id">
+                Dr. {{ doctor.fullName || doctor.username }}
+              </option>
             </select>
           </div>
         </div>
@@ -177,13 +188,11 @@
       <thead>
         <tr>
           <th>Sl No</th>
-          <th>Booking ID</th>
           <th>Patient Name</th>
           <th>Date</th>
           <th>Time</th>
           <th>Purpose</th>
           <th>Duration</th>
-          <th>Type</th>
           <th>Doctor</th>
           <th>Actions</th>
         </tr>
@@ -191,13 +200,11 @@
       <tbody>
         <tr *ngFor="let appointment of paginatedAppointments; let i = index">
           <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-          <td>{{ appointment.bookingId }}</td>
           <td>{{ appointment.patientName }}</td>
           <td>{{ appointment.date }}</td>
           <td>{{ appointment.time }}</td>
           <td>{{ appointment.purpose }}</td>
           <td>{{ appointment.duration }}</td>
-          <td>{{ appointment.type }}</td>
           <td>{{ appointment.doctor }}</td>
           <td class="actions">
             <button class="action-btn edit" (click)="editAppointment(appointment)">

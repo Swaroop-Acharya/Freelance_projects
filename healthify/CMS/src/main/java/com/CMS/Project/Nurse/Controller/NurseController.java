@@ -168,4 +168,10 @@ public class NurseController {
         MonthlyPatientCountResponseDTO response = service.monthlyPatientCount();
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/doctors")
+    public ResponseEntity<List<User>> getAllDoctors() {
+        List<User> doctors = userRepository.findAllDoctors();
+        return ResponseEntity.ok(doctors);
+    }
 }

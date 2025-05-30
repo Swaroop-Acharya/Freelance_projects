@@ -1,18 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-interface Appointment {
-  id: number;
-  bookingId: string;
-  patientName: string;
-  date: string;
-  time: string;
-  purpose: string;
-  duration: string;
-  type: 'Appointment' | 'Walk-in';
-  doctor: string;
-}
+import { AppointmentService, Appointment, AppointmentDTO, Doctor } from '../services/appointment.service';
 
 @Component({
   selector: 'app-appointments',
@@ -24,106 +13,93 @@ interface Appointment {
 export class AppointmentsComponent implements OnInit {
   protected Math = Math;
 
-  appointments: Appointment[] = [
-    {
-      id: 1,
-      bookingId: 'BOO110',
-      patientName: 'Jemimah Rodrigues',
-      date: '09-05-2025',
-      time: '10:00',
-      purpose: 'Consultation',
-      duration: '20 min',
-      type: 'Appointment',
-      doctor: 'Dr.Thamos'
-    },
-    {
-      id: 2,
-      bookingId: 'BOO114',
-      patientName: 'Hitesh Rana',
-      date: '09-05-2025',
-      time: '10:45',
-      purpose: 'Follow up',
-      duration: '15 min',
-      type: 'Appointment',
-      doctor: 'Dr.Thamos'
-    },
-    {
-      id: 3,
-      bookingId: 'BOO214',
-      patientName: 'Sameer',
-      date: '09-05-2025',
-      time: '11:15',
-      purpose: 'Follow up',
-      duration: '10 min',
-      type: 'Appointment',
-      doctor: 'Dr.Surya Kumar'
-    },
-    {
-      id: 4,
-      bookingId: 'BOO215',
-      patientName: 'Jyothsna',
-      date: '10-05-2025',
-      time: '10:15',
-      purpose: 'Consultation',
-      duration: '10 min',
-      type: 'Appointment',
-      doctor: 'Dr.Surendranath'
-    },
-    {
-      id: 5,
-      bookingId: 'BOO220',
-      patientName: 'Salma Begum',
-      date: '10-05-2025',
-      time: '10:45',
-      purpose: 'Consultation',
-      duration: '15 min',
-      type: 'Appointment',
-      doctor: 'Dr.Rafiq'
-    }
-  ];
-
-  // Modal states and form models
-  showAddModal = false;
-  showEditModal = false;
-  showDeleteModal = false;
-  selectedAppointment: Appointment | null = null;
-  appointmentToDelete: Appointment | null = null;
-
-  newAppointment: Partial<Appointment> = {
-    bookingId: '',
-    patientName: '',
-    date: '',
-    time: '',
-    purpose: 'Consultation',
-    duration: '10 min',
-    type: 'Appointment',
-    doctor: ''
-  };
-
-  doctors: string[] = [
-    'Dr. Alexander Pierce',
-    'Dr. Sunanda U',
-    'Dr. Hitesh Rana'
-  ];
+  appointments: Appointment[] = [];
+  loading = false;
+  error: string | null = null;
 
   // Pagination
   currentPage = 1;
   itemsPerPage = 10;
   searchText = '';
 
-  ngOnInit() {}
+  // Modals
+  showAddModal = false;
+  showEditModal = false;
+  showDeleteModal = false;
+
+  // Form data
+  newAppointment = {
+    patientName: '',
+    age: 0,
+    phoneNumber: '',
+    bookingId: '',
+    appointmentStatus: 'Confirmed',
+    appointmentTime: '',
+    appointmentType: 'Walkin' as const,
+    doctorId: 0,
+    duration: '00:30:00',
+    purpose: ''
+  };
+
+  selectedAppointment: Appointment | null = null;
+  appointmentToDelete: Appointment | null = null;
+
+  doctors: Doctor[] = [];
+  appointmentTypes = ['Walkin', 'ScheduledAppointment', 'Follow_up', 'Consultation'] as const;
+
+  constructor(private appointmentService: AppointmentService) {}
+
+  ngOnInit() {
+    this.loadAppointments();
+    this.loadDoctors();
+  }
+
+  loadDoctors() {
+    this.appointmentService.getAllDoctors().subscribe({
+      next: (doctors: Doctor[]) => {
+        console.log('Loaded doctors:', doctors);
+        this.doctors = doctors;
+        if (!this.doctors || this.doctors.length === 0) {
+          console.warn('No doctors loaded or empty doctors array');
+        } else {
+          this.doctors.forEach(doctor => {
+            if (!doctor.fullName && !doctor.username) {
+              console.warn('Doctor with missing name and username:', doctor);
+            }
+          });
+        }
+      },
+      error: (error: Error) => {
+        console.error('Error loading doctors:', error);
+        this.error = 'Failed to load doctors';
+      }
+    });
+  }
+
+  loadAppointments() {
+    this.loading = true;
+    this.appointmentService.getAllAppointments().subscribe({
+      next: (appointments) => {
+        this.appointments = appointments;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading appointments:', error);
+        this.error = 'Failed to load appointments';
+        this.loading = false;
+      }
+    });
+  }
 
   get filteredAppointments(): Appointment[] {
     return this.appointments.filter(appointment => 
-      appointment.patientName.toLowerCase().includes(this.searchText.toLowerCase()) ||
-      appointment.bookingId.toLowerCase().includes(this.searchText.toLowerCase()) ||
-      appointment.doctor.toLowerCase().includes(this.searchText.toLowerCase())
+      appointment.patientName.toLowerCase().includes(this.searchText.toLowerCase())
     );
   }
 
   get paginatedAppointments(): Appointment[] {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    return this.filteredAppointments.slice(startIndex, startIndex + this.itemsPerPage);
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredAppointments.slice(start, start + this.itemsPerPage);
   }
 
   get totalPages(): number {
@@ -134,19 +110,88 @@ export class AppointmentsComponent implements OnInit {
     this.currentPage = page;
   }
 
+  openAddModal() {
+    this.showAddModal = true;
+  }
+
+  closeAddModal() {
+    this.showAddModal = false;
+    this.resetAppointmentForm();
+  }
+
+  resetAppointmentForm() {
+    this.newAppointment = {
+      patientName: '',
+      age: 0,
+      phoneNumber: '',
+      bookingId: '',
+      appointmentStatus: 'Confirmed',
+      appointmentTime: '',
+      appointmentType: 'Walkin' as const,
+      doctorId: 0,
+      duration: '00:30:00',
+      purpose: ''
+    };
+  }
+
+  addAppointment() {
+    if (!this.validateAppointmentForm()) {
+      return;
+    }
+
+    // Format the duration from "XX min" to "HH:mm:ss"
+    const durationMinutes = parseInt(this.newAppointment.duration.split(' ')[0]);
+    const formattedDuration = `00:${durationMinutes.toString().padStart(2, '0')}:00`;
+
+    const appointmentData: AppointmentDTO = {
+      ...this.newAppointment,
+      phoneNumber: parseInt(this.newAppointment.phoneNumber.replace(/\D/g, '')), // Remove non-digits before parsing
+      duration: formattedDuration,
+      // Ensure appointmentTime is in ISO format
+      appointmentTime: new Date(this.newAppointment.appointmentTime).toISOString()
+    };
+
+    this.appointmentService.createAppointment(appointmentData).subscribe({
+      next: (response) => {
+        this.loadAppointments();
+        this.closeAddModal();
+      },
+      error: (error) => {
+        console.error('Error creating appointment:', error);
+        if (error.error?.message?.includes('Duplicate entry')) {
+          this.error = 'An appointment already exists for this patient. Please check the phone number or existing appointments.';
+        } else if (error.error?.message) {
+          this.error = error.error.message;
+        } else {
+          this.error = 'Failed to create appointment. Please try again later.';
+        }
+      }
+    });
+  }
+
+  validateAppointmentForm(): boolean {
+    if (!this.newAppointment.patientName) {
+      this.error = 'Patient name is required';
+      return false;
+    }
+    if (!this.newAppointment.phoneNumber) {
+      this.error = 'Phone number is required';
+      return false;
+    }
+    if (!this.newAppointment.appointmentTime) {
+      this.error = 'Appointment time is required';
+      return false;
+    }
+    if (!this.newAppointment.doctorId) {
+      this.error = 'Doctor selection is required';
+      return false;
+    }
+    return true;
+  }
+
   editAppointment(appointment: Appointment) {
     this.selectedAppointment = { ...appointment };
     this.showEditModal = true;
-  }
-
-  updateAppointment() {
-    if (this.selectedAppointment) {
-      const index = this.appointments.findIndex(a => a.id === this.selectedAppointment?.id);
-      if (index !== -1) {
-        this.appointments[index] = { ...this.selectedAppointment };
-        this.closeEditModal();
-      }
-    }
   }
 
   closeEditModal() {
@@ -154,16 +199,13 @@ export class AppointmentsComponent implements OnInit {
     this.selectedAppointment = null;
   }
 
+  updateAppointment() {
+    // Implementation for updating appointment
+  }
+
   deleteAppointment(appointment: Appointment) {
     this.appointmentToDelete = appointment;
     this.showDeleteModal = true;
-  }
-
-  confirmDelete() {
-    if (this.appointmentToDelete) {
-      this.appointments = this.appointments.filter(a => a.id !== this.appointmentToDelete?.id);
-      this.closeDeleteModal();
-    }
   }
 
   closeDeleteModal() {
@@ -171,52 +213,7 @@ export class AppointmentsComponent implements OnInit {
     this.appointmentToDelete = null;
   }
 
-  // Add Modal logic
-  openAddModal() {
-    this.showAddModal = true;
-    this.resetAppointmentForm();
-  }
-
-  closeAddModal() {
-    this.showAddModal = false;
-  }
-
-  addAppointment() {
-    if (
-      this.newAppointment.bookingId &&
-      this.newAppointment.patientName &&
-      this.newAppointment.date &&
-      this.newAppointment.time &&
-      this.newAppointment.purpose &&
-      this.newAppointment.duration &&
-      this.newAppointment.type &&
-      this.newAppointment.doctor
-    ) {
-      this.appointments.push({
-        id: this.appointments.length + 1,
-        bookingId: this.newAppointment.bookingId,
-        patientName: this.newAppointment.patientName,
-        date: this.newAppointment.date,
-        time: this.newAppointment.time,
-        purpose: this.newAppointment.purpose,
-        duration: this.newAppointment.duration,
-        type: this.newAppointment.type as 'Appointment' | 'Walk-in',
-        doctor: this.newAppointment.doctor
-      });
-      this.closeAddModal();
-    }
-  }
-
-  resetAppointmentForm() {
-    this.newAppointment = {
-      bookingId: '',
-      patientName: '',
-      date: '',
-      time: '',
-      purpose: 'Consultation',
-      duration: '10 min',
-      type: 'Appointment',
-      doctor: ''
-    };
+  confirmDelete() {
+    // Implementation for deleting appointment
   }
 } 

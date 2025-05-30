@@ -1,14 +1,14 @@
 package com.CMS.Project.Nurse.DTO;
 
 import com.CMS.Project.Nurse.Enum.AppointmentTypes;
+import com.CMS.Project.Nurse.Enum.PatientStatus;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Data
-public class CreateAppointmentDTO
-{
+public class CreateAppointmentDTO {
 
     private Long id;
     private String patientName;
@@ -20,7 +20,6 @@ public class CreateAppointmentDTO
     private AppointmentTypes appointmentType;
     private Long doctorId;
     private LocalTime duration;
-    private int queNumber;
     private String purpose;
 
 }

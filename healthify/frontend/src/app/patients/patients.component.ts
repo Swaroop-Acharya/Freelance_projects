@@ -173,12 +173,12 @@ export class PatientsComponent implements OnInit {
         date: new Date().toISOString().split('T')[0],
         createdBy: 'NURSE',
         createdTime: new Date().toISOString()
-      };
-
+    };
+    
       this.patientService.registerPatient(patientData).subscribe({
         next: (response) => {
           console.log('Patient registered successfully:', response);
-          this.closeAddModal();
+    this.closeAddModal();
           this.loadPatients(); // Reload the patients list
         },
         error: (error) => {
@@ -267,7 +267,7 @@ export class PatientsComponent implements OnInit {
   // Added missing methods for profile initials
   getInitials(firstName: string, lastName: string): string {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
-  }
+    }
 
   // Added missing methods for delete functionality
   closeDeleteModal() {
@@ -281,8 +281,8 @@ export class PatientsComponent implements OnInit {
       const index = this.patients.findIndex(p => p.id === this.patientToDelete?.id);
       if (index !== -1) {
         this.patients.splice(index, 1);
-      }
-      this.closeDeleteModal();
     }
+    this.closeDeleteModal();
+  }
   }
 } 

@@ -67,9 +67,9 @@ public class NurseService {
 
     private String generateBookingId() {
         String prefix = "BK";
-        String datePart = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        long count = registerPatientRepo.count() + 1; // simplistic
-        String sequence = String.format("%04d", count); // e.g., 0001
+        String datePart = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        long count = createAppointmentRepo.count() + 1;
+        String sequence = String.format("%04d", count);
         return prefix + datePart + sequence;
     }
 
@@ -89,7 +89,6 @@ public class NurseService {
         createAppointmentDTO1.setDuration(createAppointmentDTO.getDuration());
         createAppointmentDTO1.setPurpose(createAppointmentDTO.getPurpose());
         createAppointmentRepo.save(createAppointmentDTO1);
-
     }
 
     public List<AppointmentSchedulesDTO> showSchedules() {

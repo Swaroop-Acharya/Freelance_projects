@@ -42,6 +42,8 @@ CREATE TABLE `create_appointment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+ALTER TABLE create_appointment MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT;
+
 --
 -- Dumping data for table `create_appointment`
 --
