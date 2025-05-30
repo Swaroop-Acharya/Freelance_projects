@@ -190,31 +190,31 @@
 
               <div class="column">
                 <div class="form-group">
-                  <label for="dob">Date of Birth</label>
-                  <input type="date" id="dob" [(ngModel)]="newPatient.dateOfBirth" name="dateOfBirth">
+                  <label for="dateOfBirth">Date of Birth *</label>
+                  <input type="date" id="dateOfBirth" [(ngModel)]="newPatient.dateOfBirth" name="dateOfBirth" required>
                 </div>
 
                 <div class="form-group">
-                  <label>Gender</label>
+                  <label>Gender *</label>
                   <div class="radio-group">
                     <label>
-                      <input type="radio" [(ngModel)]="newPatient.gender" name="gender" value="Male">
+                      <input type="radio" [(ngModel)]="newPatient.gender" name="gender" value="Male" required>
                       Male
                     </label>
                     <label>
-                      <input type="radio" [(ngModel)]="newPatient.gender" name="gender" value="Female">
+                      <input type="radio" [(ngModel)]="newPatient.gender" name="gender" value="Female" required>
                       Female
                     </label>
                     <label>
-                      <input type="radio" [(ngModel)]="newPatient.gender" name="gender" value="Others">
+                      <input type="radio" [(ngModel)]="newPatient.gender" name="gender" value="Others" required>
                       Others
                     </label>
                   </div>
                 </div>
 
                 <div class="form-group">
-                  <label for="salutation">Salutation</label>
-                  <select id="salutation" [(ngModel)]="newPatient.salutation" name="salutation">
+                  <label for="salutation">Salutation *</label>
+                  <select id="salutation" [(ngModel)]="newPatient.salutation" name="salutation" required>
                     <option value="Mr">Mr</option>
                     <option value="Mrs">Mrs</option>
                     <option value="Ms">Ms</option>
@@ -265,7 +265,6 @@
                   <option value="">Select</option>
                   <option value="passport">Passport</option>
                   <option value="nationalId">National ID</option>
-                  <option value="drivingLicense">Driving License</option>
                 </select>
               </div>
 

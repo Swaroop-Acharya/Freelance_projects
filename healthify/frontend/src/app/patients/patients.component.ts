@@ -1,6 +1,7 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { PatientService, RegisterPatientDTO } from '../services/patient.service';
 
 interface Patient {
   id: number;
@@ -123,6 +124,8 @@ export class PatientsComponent implements OnInit {
 
   showAddModal = false;
   activeSection: 'personal' | 'invoice' | 'forms' = 'personal';
+  isNavCollapsed = false;
+
   newPatient = {
     firstName: '',
     lastName: '',
@@ -157,11 +160,11 @@ export class PatientsComponent implements OnInit {
   showDeleteModal = false;
   patientToDelete: Patient | null = null;
 
-  isNavCollapsed = false;
-
   showEditModal = false;
   editPatient: Patient | null = null;
   originalEditPatient: Patient | null = null;
+
+  constructor(private patientService: PatientService) {}
 
   get filteredPatients(): Patient[] {
     return this.patients.filter(patient => 
@@ -195,7 +198,7 @@ export class PatientsComponent implements OnInit {
   }
 
   addNewPatient() {
-    this.openAddModal();
+    this.showAddModal = true;
   }
 
   toggleStatusDropdown(patient: Patient) {
@@ -244,16 +247,16 @@ export class PatientsComponent implements OnInit {
     patient.showDropdown = false;
   }
 
-  openAddModal() {
-    this.showAddModal = true;
-  }
-
   closeAddModal() {
     this.showAddModal = false;
-    this.resetNewPatient();
+    this.resetForm();
   }
 
-  resetNewPatient() {
+  setActiveSection(section: string) {
+    this.activeSection = section as 'personal' | 'invoice' | 'forms';
+  }
+
+  resetForm() {
     this.newPatient = {
       firstName: '',
       lastName: '',
@@ -273,36 +276,57 @@ export class PatientsComponent implements OnInit {
     };
   }
 
-  addPatient() {
-    // Create a new patient with all required fields from the interface
-    const patient: Patient = {
-      id: this.patients.length + 1,
-      name: `${this.newPatient.firstName} ${this.newPatient.lastName}`,
-      age: this.calculateAge(this.newPatient.dateOfBirth),
-      phoneNumber: this.newPatient.contact1,
-      bookingId: `HSPB${String(this.patients.length + 1).padStart(4, '0')}`,
-      waitingNo: `W${String(this.patients.length + 1).padStart(3, '0')}`,
-      status: 'Pending',
-      category: 'Consultation',
-      appointmentTime: '10:00 - 10:30',
-      showDropdown: false
-    };
-    
-    this.patients.unshift(patient);
-    this.closeAddModal();
+  submitForm() {
+    if (this.validateForm()) {
+      const patientData: RegisterPatientDTO = {
+        verificationType: this.newPatient.hasPassport ? 'Passport' : 'LocalID',
+        countryOfOrigin: this.newPatient.country,
+        firstname: this.newPatient.firstName,
+        lastname: this.newPatient.lastName,
+        identificationNumber: parseInt(this.newPatient.idNumber),
+        dob: this.newPatient.dateOfBirth,
+        gender: this.newPatient.gender,
+        salutation: this.newPatient.salutation,
+        contactNumber1: parseInt(this.newPatient.contact1),
+        contactNumber2: this.newPatient.contact2 ? parseInt(this.newPatient.contact2) : undefined,
+        source: 'Online',
+        date: new Date().toISOString().split('T')[0],
+        createdBy: 'NURSE',
+        createdTime: new Date().toISOString()
+      };
+
+      this.patientService.registerPatient(patientData).subscribe({
+        next: (response) => {
+          console.log('Patient registered successfully:', response);
+          this.closeAddModal();
+          // TODO: Add success notification
+        },
+        error: (error) => {
+          console.error('Error registering patient:', error);
+          // TODO: Add error notification
+        }
+      });
+    }
   }
 
-  private calculateAge(dateOfBirth: string): number {
-    const today = new Date();
-    const birthDate = new Date(dateOfBirth);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
+  validateForm(): boolean {
+    if (this.activeSection === 'personal') {
+      return !!(
+        this.newPatient.country &&
+        this.newPatient.firstName &&
+        this.newPatient.lastName &&
+        this.newPatient.idNumber &&
+        this.newPatient.dateOfBirth &&
+        this.newPatient.gender &&
+        this.newPatient.salutation &&
+        this.newPatient.contact1
+      );
     }
-    
-    return age;
+    return true;
+  }
+
+  getInitials(firstName: string, lastName: string): string {
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   }
 
   get filteredForms(): Form[] {
@@ -320,15 +344,6 @@ export class PatientsComponent implements OnInit {
     return Math.ceil(this.filteredForms.length / this.formsPerPage);
   }
 
-  setActiveSection(section: 'personal' | 'invoice' | 'forms') {
-    this.activeSection = section;
-  }
-
-  getInitials(firstName: string, lastName: string): string {
-    if (!firstName && !lastName) return 'NA';
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
-  }
-
   onFormPageChange(page: number) {
     this.currentFormPage = page;
   }
@@ -341,40 +356,16 @@ export class PatientsComponent implements OnInit {
     console.log('Download form:', form);
   }
 
-  resetForm() {
-    this.resetNewPatient();
-  }
-
-  submitForm() {
-    // Validate required fields based on active section
-    if (this.activeSection === 'personal') {
-      if (!this.newPatient.firstName || !this.newPatient.lastName || !this.newPatient.contact1) {
-        // Show error message
-        return;
-      }
-    } else if (this.activeSection === 'invoice') {
-      if (this.newPatient.useExistingId && !this.newPatient.idNumber) {
-        // Show error message
-        return;
-      }
-    }
-
-    // If all validations pass, add the patient
-    this.addPatient();
-  }
-
-  toggleForm(form: Form) {
-    form.isSelected = !form.isSelected;
-  }
-
   closeViewModal() {
     this.showViewModal = false;
-    this.selectedPatient = null;
   }
 
   closeDeleteModal() {
     this.showDeleteModal = false;
-    this.patientToDelete = null;
+  }
+
+  closeEditModal() {
+    this.showEditModal = false;
   }
 
   confirmDelete() {
@@ -399,12 +390,6 @@ export class PatientsComponent implements OnInit {
     }
   }
 
-  closeEditModal() {
-    this.showEditModal = false;
-    this.editPatient = null;
-    this.originalEditPatient = null;
-  }
-
   updatePatient() {
     if (this.editPatient) {
       const index = this.patients.findIndex(p => p.id === this.editPatient!.id);
@@ -415,7 +400,9 @@ export class PatientsComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
-    // Initialize component if needed
+  toggleForm(form: Form) {
+    form.isSelected = !form.isSelected;
   }
+
+  ngOnInit() {}
 } 
