@@ -8,7 +8,6 @@ import { PatientsComponent } from '../patients/patients.component';
 import { AppointmentsComponent } from '../appointments/appointments.component';
 import { ProfileViewComponent } from '../profile-view/profile-view.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
-import { BillingComponent } from '../billing/billing.component';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { StorageService } from '../services/storage.service';
 
@@ -32,8 +31,7 @@ interface UserProfile {
     PatientsComponent,
     AppointmentsComponent,
     ProfileViewComponent,
-    NotificationsComponent,
-    BillingComponent
+    NotificationsComponent
   ],
   templateUrl: './dashboard-layout.component.html',
   styleUrls: ['./dashboard-layout.component.css']

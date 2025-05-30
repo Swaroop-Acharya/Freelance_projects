@@ -38,12 +38,6 @@
             <span class="menu-text" *ngIf="sidebarOpen">Appointments</span>
           </button>
         </li>
-        <li>
-          <button class="menu-item" (click)="setTab('billing')" data-tooltip="Billing">
-            <i class="fas fa-file-text"></i>
-            <span class="menu-text" *ngIf="sidebarOpen">Billing</span>
-          </button>
-        </li>
       </ul>
     </div>
   
@@ -116,7 +110,6 @@
             <app-doctor-schedules *ngSwitchCase="'doctor-schedules'"></app-doctor-schedules>
             <app-patients *ngSwitchCase="'patients'"></app-patients>
             <app-appointments *ngSwitchCase="'appointments'"></app-appointments>
-            <app-billing *ngSwitchCase="'billing'"></app-billing>
           </ng-container>
         </ng-container>
         <router-outlet></router-outlet>
