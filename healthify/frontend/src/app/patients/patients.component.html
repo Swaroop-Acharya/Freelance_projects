@@ -32,42 +32,24 @@
           <th>Age</th>
           <th>Phone Number</th>
           <th>Booking ID</th>
-          <th>Waiting No</th>
-          <th>Appointment Status</th>
-          <th>Appointment Category</th>
-          <th>Appointment Time</th>
+          <th>Country</th>
+          <th>Source</th>
+          <th>Created By</th>
+          <th>Created Time</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let patient of paginatedPatients; let i = index">
           <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-          <td>{{ patient.name }}</td>
-          <td>{{ patient.age }}</td>
-          <td>{{ patient.phoneNumber }}</td>
+          <td>{{ patient.firstname }} {{ patient.lastname }}</td>
+          <td>{{ calculateAge(patient.dob) }}</td>
+          <td>{{ patient.contactNumber1 }}</td>
           <td>{{ patient.bookingId }}</td>
-          <td>{{ patient.waitingNo }}</td>
-          <td>
-            <div class="status-dropdown">
-              <button class="status-button" (click)="toggleStatusDropdown(patient); $event.stopPropagation()">
-                <span class="status-badge" [style.background-color]="getStatusBgColor(patient.status)" [style.color]="getStatusColor(patient.status)">
-                  <i [class]="'fas ' + getStatusIcon(patient.status)"></i>
-                  {{ patient.status }}
-                </span>
-                <i class="fas fa-chevron-down"></i>
-              </button>
-              <div class="status-dropdown-menu" *ngIf="patient.showDropdown" (click)="$event.stopPropagation()">
-                <button *ngFor="let option of statusOptions" 
-                        class="status-option"
-                        (click)="updateStatus(patient, option.value); $event.stopPropagation()">
-                  <i [class]="'fas ' + option.icon"></i>
-                  {{ option.value }}
-                </button>
-              </div>
-            </div>
-          </td>
-          <td>{{ patient.category }}</td>
-          <td>{{ patient.appointmentTime }}</td>
+          <td>{{ patient.countryOfOrigin }}</td>
+          <td>{{ patient.source }}</td>
+          <td>{{ patient.createdBy }}</td>
+          <td>{{ patient.createdTime | date:'medium' }}</td>
           <td class="actions">
             <button class="action-btn view" (click)="viewPatient(patient)">
               <i class="fas fa-eye"></i>
@@ -380,17 +362,17 @@
         <div class="detail-row">
           <div class="detail-item">
             <label>Name</label>
-            <span>{{ selectedPatient?.name }}</span>
+            <span>{{ selectedPatient?.firstname }} {{ selectedPatient?.lastname }}</span>
           </div>
           <div class="detail-item">
             <label>Age</label>
-            <span>{{ selectedPatient?.age }}</span>
+            <span>{{ calculateAge(selectedPatient?.dob) }}</span>
           </div>
         </div>
         <div class="detail-row">
           <div class="detail-item">
             <label>Phone Number</label>
-            <span>{{ selectedPatient?.phoneNumber }}</span>
+            <span>{{ selectedPatient?.contactNumber1 }}</span>
           </div>
           <div class="detail-item">
             <label>Booking ID</label>
@@ -399,25 +381,32 @@
         </div>
         <div class="detail-row">
           <div class="detail-item">
-            <label>Waiting No</label>
-            <span>{{ selectedPatient?.waitingNo }}</span>
+            <label>Country of Origin</label>
+            <span>{{ selectedPatient?.countryOfOrigin }}</span>
           </div>
           <div class="detail-item">
-            <label>Status</label>
-            <span class="status-badge" [style.background-color]="getStatusBgColor(selectedPatient?.status)" [style.color]="getStatusColor(selectedPatient?.status)">
-              <i [class]="'fas ' + getStatusIcon(selectedPatient?.status)"></i>
-              {{ selectedPatient?.status }}
-            </span>
+            <label>Verification Type</label>
+            <span>{{ selectedPatient?.verificationType }}</span>
           </div>
         </div>
         <div class="detail-row">
           <div class="detail-item">
-            <label>Category</label>
-            <span>{{ selectedPatient?.category }}</span>
+            <label>Source</label>
+            <span>{{ selectedPatient?.source }}</span>
           </div>
           <div class="detail-item">
-            <label>Appointment Time</label>
-            <span>{{ selectedPatient?.appointmentTime }}</span>
+            <label>Created By</label>
+            <span>{{ selectedPatient?.createdBy }}</span>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-item">
+            <label>Created Time</label>
+            <span>{{ selectedPatient?.createdTime | date:'medium' }}</span>
+          </div>
+          <div class="detail-item">
+            <label>Date of Birth</label>
+            <span>{{ selectedPatient?.dob | date:'mediumDate' }}</span>
           </div>
         </div>
       </div>
@@ -438,7 +427,7 @@
           <i class="fas fa-exclamation-triangle"></i>
         </div>
         <p>Are you sure you want to delete this patient?</p>
-        <p class="patient-name">{{ patientToDelete?.name }}</p>
+        <p class="patient-name">{{ patientToDelete?.firstname }} {{ patientToDelete?.lastname }}</p>
         <div class="delete-actions">
           <button class="btn btn-secondary" (click)="closeDeleteModal()">
             <i class="fas fa-times"></i> Cancel
@@ -462,41 +451,60 @@
     <div class="modal-body">
       <form (ngSubmit)="updatePatient()">
         <div class="form-group">
-          <label for="editName">Name</label>
-          <input id="editName" type="text" [(ngModel)]="editPatient.name" name="editName" required />
+          <label for="editFirstName">First Name</label>
+          <input id="editFirstName" type="text" [(ngModel)]="editPatient.firstname" name="editFirstName" required />
         </div>
         <div class="form-group">
-          <label for="editAge">Age</label>
-          <input id="editAge" type="number" [(ngModel)]="editPatient.age" name="editAge" required />
+          <label for="editLastName">Last Name</label>
+          <input id="editLastName" type="text" [(ngModel)]="editPatient.lastname" name="editLastName" required />
         </div>
         <div class="form-group">
-          <label for="editPhone">Phone Number</label>
-          <input id="editPhone" type="text" [(ngModel)]="editPatient.phoneNumber" name="editPhone" required />
+          <label for="editDob">Date of Birth</label>
+          <input id="editDob" type="date" [(ngModel)]="editPatient.dob" name="editDob" required />
         </div>
         <div class="form-group">
-          <label for="editBookingId">Booking ID</label>
-          <input id="editBookingId" type="text" [(ngModel)]="editPatient.bookingId" name="editBookingId" required />
-        </div>
-        <div class="form-group">
-          <label for="editWaitingNo">Waiting No</label>
-          <input id="editWaitingNo" type="text" [(ngModel)]="editPatient.waitingNo" name="editWaitingNo" required />
-        </div>
-        <div class="form-group">
-          <label for="editStatus">Status</label>
-          <select id="editStatus" [(ngModel)]="editPatient.status" name="editStatus" required>
-            <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.value }}</option>
+          <label for="editGender">Gender</label>
+          <select id="editGender" [(ngModel)]="editPatient.gender" name="editGender" required>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="editCategory">Category</label>
-          <select id="editCategory" [(ngModel)]="editPatient.category" name="editCategory" required>
-            <option value="Consultation">Consultation</option>
-            <option value="Followup">Followup</option>
+          <label for="editSalutation">Salutation</label>
+          <select id="editSalutation" [(ngModel)]="editPatient.salutation" name="editSalutation" required>
+            <option value="Mr.">Mr.</option>
+            <option value="Mrs.">Mrs.</option>
+            <option value="Ms.">Ms.</option>
+            <option value="Dr.">Dr.</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="editAppointmentTime">Appointment Time</label>
-          <input id="editAppointmentTime" type="text" [(ngModel)]="editPatient.appointmentTime" name="editAppointmentTime" required />
+          <label for="editCountry">Country of Origin</label>
+          <input id="editCountry" type="text" [(ngModel)]="editPatient.countryOfOrigin" name="editCountry" required />
+        </div>
+        <div class="form-group">
+          <label for="editVerificationType">Verification Type</label>
+          <select id="editVerificationType" [(ngModel)]="editPatient.verificationType" name="editVerificationType" required>
+            <option value="LocalID">Local ID</option>
+            <option value="Passport">Passport</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editIdNumber">Identification Number</label>
+          <input id="editIdNumber" type="number" [(ngModel)]="editPatient.identificationNumber" name="editIdNumber" required />
+        </div>
+        <div class="form-group">
+          <label for="editContact1">Contact Number 1</label>
+          <input id="editContact1" type="number" [(ngModel)]="editPatient.contactNumber1" name="editContact1" required />
+        </div>
+        <div class="form-group">
+          <label for="editContact2">Contact Number 2</label>
+          <input id="editContact2" type="number" [(ngModel)]="editPatient.contactNumber2" name="editContact2" />
+        </div>
+        <div class="form-group">
+          <label for="editSource">Source</label>
+          <input id="editSource" type="text" [(ngModel)]="editPatient.source" name="editSource" required />
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Cancel</button>

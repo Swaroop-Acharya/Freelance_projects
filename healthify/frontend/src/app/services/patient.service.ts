@@ -20,6 +20,25 @@ export interface RegisterPatientDTO {
   createdTime: string;
 }
 
+export interface Patient {
+  id: number;
+  verificationType: 'LocalID' | 'Passport';
+  bookingId: string;
+  countryOfOrigin: string;
+  firstname: string;
+  lastname: string;
+  identificationNumber: number;
+  gender: string;
+  salutation: string;
+  contactNumber1: number;
+  contactNumber2?: number;
+  source: string;
+  date: string;
+  createdBy: string;
+  createdTime: string;
+  dob: string | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -34,6 +53,11 @@ export class PatientService {
   private getHeaders(): HttpHeaders {
     const token = this.storageService.getItem('token');
     return new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  }
+
+  getAllPatients(): Observable<Patient[]> {
+    const headers = this.getHeaders();
+    return this.http.get<Patient[]>(`${this.baseUrl}/nurse/registerPatient`, { headers });
   }
 
   registerPatient(patientData: RegisterPatientDTO): Observable<any> {
