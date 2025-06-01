@@ -360,4 +360,27 @@ public class NurseService {
         return new MonthlyPatientCountResponseDTO(weeklySummary, fullDailyCounts);
     }
 
+    public RegisterPatient updatePatient(Long id, RegisterPatientDTO dto) {
+        RegisterPatient existingPatient = registerPatientRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Patient not found with ID: " + id));
+
+        // Update the fields
+        existingPatient.setVerificationType(dto.getVerificationType());
+        existingPatient.setCountryOfOrigin(dto.getCountryOfOrigin());
+        existingPatient.setFirstname(dto.getFirstname());
+        existingPatient.setLastname(dto.getLastname());
+        existingPatient.setIdentificationNumber(dto.getIdentificationNumber());
+        existingPatient.setDOB(dto.getDOB());
+        existingPatient.setGender(dto.getGender());
+        existingPatient.setSalutation(dto.getSalutation());
+        existingPatient.setContactNumber1(dto.getContactNumber1());
+        existingPatient.setContactNumber2(dto.getContactNumber2());
+        existingPatient.setSource(dto.getSource());
+        existingPatient.setDate(dto.getDate());
+        existingPatient.setCreatedBy(dto.getCreatedBy());
+        existingPatient.setCreatedTime(dto.getCreatedTime());
+
+        return registerPatientRepo.save(existingPatient);
+    }
+
 }

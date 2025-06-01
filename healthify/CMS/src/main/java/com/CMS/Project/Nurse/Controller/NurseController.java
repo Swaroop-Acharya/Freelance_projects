@@ -139,6 +139,17 @@ public class NurseController {
         return ResponseEntity.ok(service.showRegisteredPatients());
     }
 
+    @PutMapping("/registerPatient/{id}")
+    public ResponseEntity<?> updatePatient(@PathVariable Long id, @RequestBody RegisterPatientDTO registerPatientDTO) {
+        try {
+            RegisterPatient updatedPatient = service.updatePatient(id, registerPatientDTO);
+            return ResponseEntity.ok(updatedPatient);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse(e.getMessage(), null, 400));
+        }
+    }
+
     //calender filter
     @GetMapping("/doctorSchedulesByCalender/{date}")
     public ResponseEntity<List<DoctorSchedulesDTO>> calenderSearch(@PathVariable LocalDate date)

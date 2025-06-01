@@ -1,0 +1,12 @@
+add user:
+COO
+Fname
+lname
+identifcationNO
+dob
+gender
+saluation
+contact_no1
+contact_no2
+identification_type
+

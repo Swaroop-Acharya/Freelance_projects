@@ -239,8 +239,17 @@ export class PatientsComponent implements OnInit {
 
   updatePatient() {
     if (this.editPatient) {
-      // TODO: Implement update patient functionality when backend endpoint is available
-      this.closeEditModal();
+      this.patientService.updatePatient(this.editPatient.id, this.editPatient).subscribe({
+        next: (response) => {
+          console.log('Patient updated successfully:', response);
+          this.loadPatients(); // Reload the patients list
+          this.closeEditModal();
+        },
+        error: (error) => {
+          console.error('Error updating patient:', error);
+          // TODO: Add error notification
+        }
+      });
     }
   }
 

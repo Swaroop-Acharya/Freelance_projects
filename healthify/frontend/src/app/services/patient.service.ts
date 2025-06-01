@@ -75,4 +75,28 @@ export class PatientService {
 
     return this.http.post(`${this.baseUrl}/nurse/registerPatient`, formattedData, { headers });
   }
+
+  updatePatient(id: number, patientData: Patient): Observable<any> {
+    const headers = this.getHeaders();
+    
+    // Format the data to match the backend expectations
+    const formattedData = {
+      verificationType: patientData.verificationType,
+      countryOfOrigin: patientData.countryOfOrigin,
+      firstname: patientData.firstname,
+      lastname: patientData.lastname,
+      identificationNumber: Number(patientData.identificationNumber),
+      dob: patientData.dob,
+      gender: patientData.gender,
+      salutation: patientData.salutation,
+      contactNumber1: Number(patientData.contactNumber1),
+      contactNumber2: patientData.contactNumber2 ? Number(patientData.contactNumber2) : undefined,
+      source: patientData.source,
+      date: new Date(patientData.date).toISOString().split('T')[0],
+      createdBy: patientData.createdBy,
+      createdTime: new Date(patientData.createdTime).toISOString()
+    };
+
+    return this.http.put(`${this.baseUrl}/nurse/registerPatient/${id}`, formattedData, { headers });
+  }
 } 
