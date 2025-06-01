@@ -198,7 +198,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary" [disabled]="editForm.invalid">Update</button>
+          <button type="submit" class="btn btn-primary">Update</button>
         </div>
       </form>
     </div>
@@ -209,16 +209,23 @@
     <div class="modal">
       <div class="modal-header">
         <h2>Delete Appointment</h2>
-        <button class="close-btn" (click)="closeDeleteModal()">&times;</button>
+        <button class="close-btn" (click)="closeDeleteModal()" [disabled]="isDeleting">&times;</button>
       </div>
       <div class="modal-body">
         <p>Are you sure you want to delete the appointment for {{ appointmentToDelete?.patientName }}?</p>
         <p>Booking ID: {{ appointmentToDelete?.bookingId }}</p>
         <p>Date: {{ appointmentToDelete?.date }} at {{ appointmentToDelete?.time }}</p>
+        
+        <div *ngIf="deleteError" class="error-message" role="alert">
+          {{deleteError}}
+        </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()">Cancel</button>
-        <button type="button" class="btn btn-primary" (click)="confirmDelete()" style="background-color: #dc2626;">Delete</button>
+        <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()" [disabled]="isDeleting">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="confirmDelete()" [disabled]="isDeleting" style="background-color: #dc2626;">
+          <span *ngIf="isDeleting">Deleting...</span>
+          <span *ngIf="!isDeleting">Delete</span>
+        </button>
       </div>
     </div>
   </div>

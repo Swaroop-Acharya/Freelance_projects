@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 export enum AppointmentTypes {
   Walkin = 'Walkin',
@@ -99,7 +100,27 @@ export class AppointmentService {
 
   updateAppointment(id: number, appointmentData: AppointmentDTO): Observable<any> {
     const headers = this.getHeaders();
-    return this.http.put(`${this.baseUrl}/appointment/${id}`, appointmentData, { headers });
+    
+    // Format the appointment data according to backend expectations
+    const formattedData = {
+      ...appointmentData,
+      // Ensure appointmentTime is in the correct format
+      appointmentTime: new Date(appointmentData.appointmentTime).toISOString(),
+      // Convert duration to proper time format if needed
+      duration: appointmentData.duration.includes(':') ? appointmentData.duration : `${appointmentData.duration}:00:00`
+    };
+
+    return this.http.put(`${this.baseUrl}/appointment/${id}`, formattedData, { 
+      headers,
+      // Add proper error handling
+      observe: 'response'
+    }).pipe(
+      map(response => response.body),
+      catchError(error => {
+        console.error('Error in updateAppointment:', error);
+        throw error;
+      })
+    );
   }
 
   getAllAppointments(): Observable<Appointment[]> {
@@ -110,5 +131,10 @@ export class AppointmentService {
   getAppointmentById(id: number): Observable<AppointmentDTO> {
     const headers = this.getHeaders();
     return this.http.get<AppointmentDTO>(`${this.baseUrl}/appointment/${id}`, { headers });
+  }
+
+  deleteAppointment(id: number): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.delete(`${this.baseUrl}/appointment/${id}`, { headers });
   }
 } 

@@ -196,4 +196,15 @@ public class NurseController {
         List<User> doctors = userRepository.findAllDoctors();
         return ResponseEntity.ok(doctors);
     }
+
+    @DeleteMapping("/appointment/{id}")
+    public ResponseEntity<?> deleteAppointment(@PathVariable Long id) {
+        try {
+            service.deleteAppointment(id);
+            return ResponseEntity.ok(new ApiResponse("Appointment deleted successfully", null, 200));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse(e.getMessage(), null, 400));
+        }
+    }
 }

@@ -47,6 +47,10 @@ export class AppointmentsComponent implements OnInit {
   selectedAppointment: Appointment | null = null;
   appointmentToDelete: Appointment | null = null;
 
+  // Add these new properties
+  isDeleting = false;
+  deleteError: string | null = null;
+
   constructor(private appointmentService: AppointmentService) {}
 
   ngOnInit() {
@@ -179,32 +183,74 @@ export class AppointmentsComponent implements OnInit {
   }
 
   updateAppointment() {
-    if (this.selectedAppointment && this.newAppointment.id) {
-      this.appointmentService.updateAppointment(this.newAppointment.id, this.newAppointment).subscribe({
-        next: (response) => {
-          this.loadAppointments();
-          this.closeEditModal();
-        },
-        error: (error) => {
-          console.error('Error updating appointment:', error);
-          this.error = error.error?.message || 'Failed to update appointment';
-        }
-      });
+    if (!this.selectedAppointment?.id) {
+      this.error = 'Invalid appointment ID';
+      return;
     }
+
+    // Clear any previous errors
+    this.error = null;
+
+    // Ensure the appointment data is properly formatted
+    const appointmentData: AppointmentDTO = {
+      id: this.selectedAppointment.id,
+      patientName: this.newAppointment.patientName,
+      age: this.newAppointment.age,
+      phoneNumber: this.newAppointment.phoneNumber,
+      bookingId: this.newAppointment.bookingId,
+      appointmentStatus: this.newAppointment.appointmentStatus,
+      appointmentTime: this.newAppointment.appointmentTime,
+      appointmentType: this.newAppointment.appointmentType,
+      doctorId: this.newAppointment.doctorId,
+      duration: this.newAppointment.duration,
+      purpose: this.newAppointment.purpose
+    };
+
+    this.appointmentService.updateAppointment(this.selectedAppointment.id, appointmentData).subscribe({
+      next: (response) => {
+        console.log('Appointment updated successfully:', response);
+        this.loadAppointments();
+        this.closeEditModal();
+      },
+      error: (error) => {
+        console.error('Error updating appointment:', error);
+        this.error = error.error?.message || 'Failed to update appointment. Please try again.';
+      }
+    });
   }
 
   deleteAppointment(appointment: Appointment) {
     this.appointmentToDelete = appointment;
     this.showDeleteModal = true;
+    this.deleteError = null;
   }
 
   closeDeleteModal() {
     this.showDeleteModal = false;
     this.appointmentToDelete = null;
+    this.deleteError = null;
+    this.isDeleting = false;
   }
 
   confirmDelete() {
-    // TODO: Implement delete functionality
-    this.closeDeleteModal();
+    if (!this.appointmentToDelete?.id) {
+      this.deleteError = 'Invalid appointment ID';
+      return;
+    }
+
+    this.isDeleting = true;
+    this.deleteError = null;
+
+    this.appointmentService.deleteAppointment(this.appointmentToDelete.id).subscribe({
+      next: () => {
+        this.loadAppointments();
+        this.closeDeleteModal();
+      },
+      error: (error) => {
+        console.error('Error deleting appointment:', error);
+        this.deleteError = error.error?.message || 'Failed to delete appointment';
+        this.isDeleting = false;
+      }
+    });
   }
 } 

@@ -409,4 +409,10 @@ public class NurseService {
         return registerPatientRepo.save(existingPatient);
     }
 
+    public void deleteAppointment(Long id) {
+        CreateAppointment appointment = createAppointmentRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Appointment not found with ID: " + id));
+        createAppointmentRepo.delete(appointment);
+    }
+
 }
