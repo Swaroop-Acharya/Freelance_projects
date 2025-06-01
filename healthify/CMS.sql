@@ -33,7 +33,7 @@ CREATE TABLE `create_appointment` (
   `ph_no` bigint DEFAULT NULL,
   `bookingid` varchar(255) DEFAULT NULL,
   `purpose` varchar(255) DEFAULT NULL,
-  `status` enum('Cancelled','Confirmed','Pending') DEFAULT NULL,
+  `status` enum('Cancelled','Confirmed','Pending','Finished') DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UKe3nyq171k21n2ckiw8ohj5moq` (`ph_no`),
   KEY `FKdb5xg3oqch6rn2fl4vwtpin9k` (`doctor_id`),
@@ -41,6 +41,10 @@ CREATE TABLE `create_appointment` (
   CONSTRAINT `FKk6ghacx8yvlj4upu9b4brvnf5` FOREIGN KEY (`ph_no`) REFERENCES `register_patient` (`contact_number1`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+ALTER TABLE create_appointment 
+MODIFY COLUMN status ENUM('Cancelled','Confirmed','Pending','Finished');
+
 
 ALTER TABLE create_appointment MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT;
 

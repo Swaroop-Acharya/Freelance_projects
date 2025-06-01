@@ -60,12 +60,12 @@
           <div class="form-group">
             <label for="duration">Duration</label>
             <select id="duration" name="duration" [(ngModel)]="newAppointment.duration" required>
-              <option value="10 min">10 min</option>
-              <option value="15 min">15 min</option>
-              <option value="20 min">20 min</option>
-              <option value="30 min">30 min</option>
-              <option value="45 min">45 min</option>
-              <option value="60 min">60 min</option>
+              <option value="00:10:00">10 min</option>
+              <option value="00:15:00">15 min</option>
+              <option value="00:20:00">20 min</option>
+              <option value="00:30:00">30 min</option>
+              <option value="00:45:00">45 min</option>
+              <option value="01:00:00">60 min</option>
             </select>
           </div>
 
@@ -94,54 +94,111 @@
         <h2>Edit Appointment</h2>
         <button class="close-btn" (click)="closeEditModal()">&times;</button>
       </div>
-      <form (ngSubmit)="updateAppointment()" #editForm="ngForm" *ngIf="selectedAppointment">
+      <form #editForm="ngForm" (ngSubmit)="updateAppointment()" *ngIf="selectedAppointment">
         <div class="modal-body">
           <div class="form-group">
-            <label>Booking ID</label>
-            <input type="text" [(ngModel)]="selectedAppointment.bookingId" name="bookingId" required />
+            <label for="editBookingId">Booking ID*</label>
+            <input type="text" id="editBookingId" name="bookingId" [(ngModel)]="newAppointment.bookingId" required readonly>
           </div>
+
           <div class="form-group">
-            <label>Patient Name</label>
-            <input type="text" [(ngModel)]="selectedAppointment.patientName" name="patientName" required />
+            <label for="editPatientName">Patient Name*</label>
+            <input type="text" id="editPatientName" name="patientName" [(ngModel)]="newAppointment.patientName" required>
+            <div *ngIf="editForm.submitted && editForm.form.get('patientName')?.invalid" class="error-text">
+              Patient name is required
+            </div>
           </div>
+
           <div class="form-group">
-            <label>Date</label>
-            <input type="date" [(ngModel)]="selectedAppointment.date" name="date" required />
+            <label for="editAge">Age*</label>
+            <input type="number" id="editAge" name="age" [(ngModel)]="newAppointment.age" required min="0" max="150">
+            <div *ngIf="editForm.submitted && editForm.form.get('age')?.invalid" class="error-text">
+              Valid age is required
+            </div>
           </div>
+
           <div class="form-group">
-            <label>Time</label>
-            <input type="time" [(ngModel)]="selectedAppointment.time" name="time" required />
+            <label for="editPhoneNumber">Phone Number*</label>
+            <input type="tel" id="editPhoneNumber" name="phoneNumber" [(ngModel)]="newAppointment.phoneNumber" required pattern="[0-9]{10}">
+            <div *ngIf="editForm.submitted && editForm.form.get('phoneNumber')?.invalid" class="error-text">
+              Valid phone number is required
+            </div>
           </div>
+
           <div class="form-group">
-            <label>Purpose</label>
-            <select [(ngModel)]="selectedAppointment.purpose" name="purpose" required style="border: 1px solid black;">
-              <option value="Consultation">Consultation</option>
-              <option value="Follow up">Follow up</option>
+            <label for="editAppointmentTime">Appointment Date & Time*</label>
+            <input type="datetime-local" id="editAppointmentTime" name="appointmentTime" [(ngModel)]="newAppointment.appointmentTime" required>
+            <div *ngIf="editForm.submitted && editForm.form.get('appointmentTime')?.invalid" class="error-text">
+              Appointment time is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="editAppointmentType">Appointment Type*</label>
+            <select id="editAppointmentType" name="appointmentType" [(ngModel)]="newAppointment.appointmentType" required>
+              <option value="">-- Select Type --</option>
+              <option *ngFor="let type of appointmentTypes" [value]="type">{{type}}</option>
             </select>
+            <div *ngIf="editForm.submitted && editForm.form.get('appointmentType')?.invalid" class="error-text">
+              Appointment type is required
+            </div>
           </div>
+
           <div class="form-group">
-            <label>Duration</label>
-            <select [(ngModel)]="selectedAppointment.duration" name="duration" required>
-              <option value="10 min">10 min</option>
-              <option value="15 min">15 min</option>
-              <option value="20 min">20 min</option>
-              <option value="30 min">30 min</option>
-              <option value="45 min">45 min</option>
-              <option value="60 min">60 min</option>
+            <label for="editStatus">Status*</label>
+            <select id="editStatus" name="appointmentStatus" [(ngModel)]="newAppointment.appointmentStatus" required>
+              <option value="">-- Select Status --</option>
+              <option *ngFor="let status of appointmentStatuses" [value]="status">{{status}}</option>
             </select>
+            <div *ngIf="editForm.submitted && editForm.form.get('appointmentStatus')?.invalid" class="error-text">
+              Status is required
+            </div>
           </div>
+
           <div class="form-group">
-            <label>Doctor</label>
-            <select [(ngModel)]="selectedAppointment.doctor" name="doctor" required>
-              <option *ngFor="let doctor of doctors" [value]="doctor.id">
+            <label for="editDoctorId">Doctor*</label>
+            <select id="editDoctorId" name="doctorId" [(ngModel)]="newAppointment.doctorId" required>
+              <option [ngValue]="null">-- Select a Doctor --</option>
+              <option *ngFor="let doctor of doctors" [ngValue]="doctor.id">
                 Dr. {{ doctor.fullName || doctor.username }}
               </option>
             </select>
+            <div *ngIf="editForm.submitted && editForm.form.get('doctorId')?.invalid" class="error-text">
+              Doctor selection is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="editDuration">Duration*</label>
+            <select id="editDuration" name="duration" [(ngModel)]="newAppointment.duration" required>
+              <option value="">-- Select Duration --</option>
+              <option value="00:10:00">10 min</option>
+              <option value="00:15:00">15 min</option>
+              <option value="00:20:00">20 min</option>
+              <option value="00:30:00">30 min</option>
+              <option value="00:45:00">45 min</option>
+              <option value="01:00:00">60 min</option>
+            </select>
+            <div *ngIf="editForm.submitted && editForm.form.get('duration')?.invalid" class="error-text">
+              Duration is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="editPurpose">Purpose*</label>
+            <textarea id="editPurpose" name="purpose" [(ngModel)]="newAppointment.purpose" required minlength="5" style="border: 1px solid black;"></textarea>
+            <div *ngIf="editForm.submitted && editForm.form.get('purpose')?.invalid" class="error-text">
+              Purpose is required (minimum 5 characters)
+            </div>
+          </div>
+
+          <div *ngIf="error" class="error-message" role="alert">
+            {{error}}
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary">Update</button>
+          <button type="submit" class="btn btn-primary" [disabled]="editForm.invalid">Update</button>
         </div>
       </form>
     </div>
@@ -188,6 +245,7 @@
       <thead>
         <tr>
           <th>Sl No</th>
+          <th>Booking ID</th>
           <th>Patient Name</th>
           <th>Date</th>
           <th>Time</th>
@@ -200,6 +258,7 @@
       <tbody>
         <tr *ngFor="let appointment of paginatedAppointments; let i = index">
           <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+          <td>{{ appointment.bookingId }}</td>
           <td>{{ appointment.patientName }}</td>
           <td>{{ appointment.date }}</td>
           <td>{{ appointment.time }}</td>

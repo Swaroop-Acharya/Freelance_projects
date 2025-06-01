@@ -8,13 +8,16 @@ import java.time.LocalTime;
 
 @Data
 public class AppointmentSchedulesDTO {
+    private Long id;
     private String patientName;
-    private String bookingID;
+    private String phoneNumber;
+    private String age;
+    private String bookingId;
     private LocalDate date;
     private LocalTime time;
     private String purpose;
     private String doctor;
     private int room;
-    private LocalTime duration;
     private PatientStatus status;
+    private LocalTime duration;
 }

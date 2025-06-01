@@ -91,25 +91,51 @@ public class NurseService {
         createAppointmentRepo.save(createAppointmentDTO1);
     }
 
+    public void updateAppointment(Long id, CreateAppointmentDTO appointmentDTO) {
+        CreateAppointment existingAppointment = createAppointmentRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Appointment not found with ID: " + id));
+
+        User doctor = userRepo.findById(appointmentDTO.getDoctorId())
+                .orElseThrow(() -> new RuntimeException("Doctor not found with ID: " + appointmentDTO.getDoctorId()));
+
+        RegisterPatient patient = registerPatientRepo.findByContactNumber1(appointmentDTO.getPhoneNumber())
+                .orElseGet(() -> registerPatientRepo.findByContactNumber2(appointmentDTO.getPhoneNumber())
+                .orElseThrow(() -> new RuntimeException("Patient not found with given phone number")));
+
+        // Update the fields
+        existingAppointment.setAge(appointmentDTO.getAge());
+        existingAppointment.setAppointmentTypes(appointmentDTO.getAppointmentType());
+        existingAppointment.setPatientName(appointmentDTO.getPatientName());
+        existingAppointment.setPhoneNumber(patient);
+        existingAppointment.setBookingID(appointmentDTO.getBookingId());
+        existingAppointment.setStatus(PatientStatus.valueOf(appointmentDTO.getAppointmentStatus()));
+        existingAppointment.setAppointmentDateTime(appointmentDTO.getAppointmentTime());
+        existingAppointment.setDoctor(doctor);
+        existingAppointment.setDuration(appointmentDTO.getDuration());
+        existingAppointment.setPurpose(appointmentDTO.getPurpose());
+
+        createAppointmentRepo.save(existingAppointment);
+    }
+
     public List<AppointmentSchedulesDTO> showSchedules() {
         List<AppointmentSchedulesDTO> list = new ArrayList<>();
-        AppointmentSchedulesDTO appointmentSchedulesDTO = new AppointmentSchedulesDTO();
         List<CreateAppointment> appointmentList = createAppointmentRepo.findAll();
-
 
         for (CreateAppointment a : appointmentList) {
             AppointmentSchedulesDTO dto = new AppointmentSchedulesDTO();
 
-            // Assuming you have methods to copy relevant data from CreateAppointment to DTO
+            // Set all fields including ID
+            dto.setId(a.getId());
             dto.setPatientName(a.getPatientName());
+            dto.setPhoneNumber(String.valueOf(a.getPhoneNumber().getContactNumber1()));
+            dto.setAge(String.valueOf(a.getAge()));
             dto.setDate(a.getAppointmentDateTime().toLocalDate());
             dto.setTime(a.getAppointmentDateTime().toLocalTime());
             dto.setPurpose(a.getPurpose());
             dto.setDoctor(userRepo.getDoctorName(a.getDoctor().getId()));
             dto.setStatus(a.getStatus());
             dto.setDuration(a.getDuration());
-            dto.setBookingID(a.getBookingID());
-            // ...add other fields as needed
+            dto.setBookingId(a.getBookingID());
 
             list.add(dto);
         }

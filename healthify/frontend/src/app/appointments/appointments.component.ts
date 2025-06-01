@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AppointmentService, Appointment, AppointmentDTO, Doctor } from '../services/appointment.service';
+import { AppointmentService, AppointmentDTO, Appointment, Doctor, AppointmentTypes, AppointmentStatus } from '../services/appointment.service';
 
 @Component({
   selector: 'app-appointments',
@@ -13,7 +13,10 @@ import { AppointmentService, Appointment, AppointmentDTO, Doctor } from '../serv
 export class AppointmentsComponent implements OnInit {
   protected Math = Math;
 
-  appointments: Appointment[] = [];
+  appointments:  Appointment[] = [];
+  doctors: Doctor[] = [];
+  appointmentTypes = Object.values(AppointmentTypes);
+  appointmentStatuses = Object.values(AppointmentStatus);
   loading = false;
   error: string | null = null;
 
@@ -28,24 +31,21 @@ export class AppointmentsComponent implements OnInit {
   showDeleteModal = false;
 
   // Form data
-  newAppointment = {
+  newAppointment: AppointmentDTO = {
     patientName: '',
     age: 0,
-    phoneNumber: '',
+    phoneNumber: 0,
     bookingId: '',
-    appointmentStatus: 'Confirmed',
+    appointmentStatus: AppointmentStatus.Pending,
     appointmentTime: '',
-    appointmentType: 'Walkin' as const,
+    appointmentType: AppointmentTypes.ScheduledAppointment,
     doctorId: 0,
-    duration: '00:30:00',
+    duration: '',
     purpose: ''
   };
 
   selectedAppointment: Appointment | null = null;
   appointmentToDelete: Appointment | null = null;
-
-  doctors: Doctor[] = [];
-  appointmentTypes = ['Walkin', 'ScheduledAppointment', 'Follow_up', 'Consultation'] as const;
 
   constructor(private appointmentService: AppointmentService) {}
 
@@ -56,22 +56,11 @@ export class AppointmentsComponent implements OnInit {
 
   loadDoctors() {
     this.appointmentService.getAllDoctors().subscribe({
-      next: (doctors: Doctor[]) => {
-        console.log('Loaded doctors:', doctors);
+      next: (doctors) => {
         this.doctors = doctors;
-        if (!this.doctors || this.doctors.length === 0) {
-          console.warn('No doctors loaded or empty doctors array');
-        } else {
-          this.doctors.forEach(doctor => {
-            if (!doctor.fullName && !doctor.username) {
-              console.warn('Doctor with missing name and username:', doctor);
-            }
-          });
-        }
       },
-      error: (error: Error) => {
+      error: (error) => {
         console.error('Error loading doctors:', error);
-        this.error = 'Failed to load doctors';
       }
     });
   }
@@ -80,7 +69,11 @@ export class AppointmentsComponent implements OnInit {
     this.loading = true;
     this.appointmentService.getAllAppointments().subscribe({
       next: (appointments) => {
-        this.appointments = appointments;
+        console.log('Raw appointments data:', appointments);
+        this.appointments = appointments.map(appointment => ({
+          ...appointment,
+          id: appointment.id || 0
+        }));
         this.loading = false;
       },
       error: (error) => {
@@ -93,13 +86,15 @@ export class AppointmentsComponent implements OnInit {
 
   get filteredAppointments(): Appointment[] {
     return this.appointments.filter(appointment => 
-      appointment.patientName.toLowerCase().includes(this.searchText.toLowerCase())
+      appointment.patientName.toLowerCase().includes(this.searchText.toLowerCase()) ||
+      appointment.bookingId.toLowerCase().includes(this.searchText.toLowerCase()) ||
+      appointment.doctor.toLowerCase().includes(this.searchText.toLowerCase())
     );
   }
 
   get paginatedAppointments(): Appointment[] {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.filteredAppointments.slice(start, start + this.itemsPerPage);
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredAppointments.slice(startIndex, startIndex + this.itemsPerPage);
   }
 
   get totalPages(): number {
@@ -116,81 +111,65 @@ export class AppointmentsComponent implements OnInit {
 
   closeAddModal() {
     this.showAddModal = false;
-    this.resetAppointmentForm();
+    this.resetNewAppointment();
   }
 
-  resetAppointmentForm() {
+  resetNewAppointment() {
     this.newAppointment = {
       patientName: '',
       age: 0,
-      phoneNumber: '',
+      phoneNumber: 0,
       bookingId: '',
-      appointmentStatus: 'Confirmed',
+      appointmentStatus: AppointmentStatus.Pending,
       appointmentTime: '',
-      appointmentType: 'Walkin' as const,
+      appointmentType: AppointmentTypes.ScheduledAppointment,
       doctorId: 0,
-      duration: '00:30:00',
+      duration: '',
       purpose: ''
     };
   }
 
   addAppointment() {
-    if (!this.validateAppointmentForm()) {
-      return;
-    }
-
-    // Format the duration from "XX min" to "HH:mm:ss"
-    const durationMinutes = parseInt(this.newAppointment.duration.split(' ')[0]);
-    const formattedDuration = `00:${durationMinutes.toString().padStart(2, '0')}:00`;
-
-    const appointmentData: AppointmentDTO = {
-      ...this.newAppointment,
-      phoneNumber: parseInt(this.newAppointment.phoneNumber.replace(/\D/g, '')), // Remove non-digits before parsing
-      duration: formattedDuration,
-      // Ensure appointmentTime is in ISO format
-      appointmentTime: new Date(this.newAppointment.appointmentTime).toISOString()
-    };
-
-    this.appointmentService.createAppointment(appointmentData).subscribe({
+    this.appointmentService.createAppointment(this.newAppointment).subscribe({
       next: (response) => {
+        console.log('Appointment created successfully:', response);
         this.loadAppointments();
         this.closeAddModal();
       },
       error: (error) => {
         console.error('Error creating appointment:', error);
-        if (error.error?.message?.includes('Duplicate entry')) {
-          this.error = 'An appointment already exists for this patient. Please check the phone number or existing appointments.';
-        } else if (error.error?.message) {
-          this.error = error.error.message;
-        } else {
-          this.error = 'Failed to create appointment. Please try again later.';
-        }
+        this.error = 'Failed to create appointment';
       }
     });
   }
 
-  validateAppointmentForm(): boolean {
-    if (!this.newAppointment.patientName) {
-      this.error = 'Patient name is required';
-      return false;
-    }
-    if (!this.newAppointment.phoneNumber) {
-      this.error = 'Phone number is required';
-      return false;
-    }
-    if (!this.newAppointment.appointmentTime) {
-      this.error = 'Appointment time is required';
-      return false;
-    }
-    if (!this.newAppointment.doctorId) {
-      this.error = 'Doctor selection is required';
-      return false;
-    }
-    return true;
-  }
-
   editAppointment(appointment: Appointment) {
-    this.selectedAppointment = { ...appointment };
+    if (!appointment.id) {
+      console.error('Appointment ID is undefined');
+      this.error = 'Cannot edit appointment: Invalid appointment ID';
+      return;
+    }
+
+    const appointmentTime = new Date(`${appointment.date}T${appointment.time}`);
+    
+    // Find the doctor ID based on the doctor's name
+    const doctorId = this.doctors.find(d => d.fullName === appointment.doctor)?.id || 0;
+    
+    this.newAppointment = {
+      id: appointment.id,
+      patientName: appointment.patientName,
+      age: appointment.age || 0,
+      phoneNumber: appointment.phoneNumber || 0,
+      bookingId: appointment.bookingId,
+      appointmentStatus: appointment.status as AppointmentStatus,
+      appointmentTime: appointmentTime.toISOString().slice(0, 16),
+      appointmentType: appointment.type as AppointmentTypes,
+      doctorId: doctorId,
+      duration: appointment.duration,
+      purpose: appointment.purpose
+    };
+    
+    this.selectedAppointment = appointment;
     this.showEditModal = true;
   }
 
@@ -200,7 +179,18 @@ export class AppointmentsComponent implements OnInit {
   }
 
   updateAppointment() {
-    // Implementation for updating appointment
+    if (this.selectedAppointment && this.newAppointment.id) {
+      this.appointmentService.updateAppointment(this.newAppointment.id, this.newAppointment).subscribe({
+        next: (response) => {
+          this.loadAppointments();
+          this.closeEditModal();
+        },
+        error: (error) => {
+          console.error('Error updating appointment:', error);
+          this.error = error.error?.message || 'Failed to update appointment';
+        }
+      });
+    }
   }
 
   deleteAppointment(appointment: Appointment) {
@@ -214,6 +204,7 @@ export class AppointmentsComponent implements OnInit {
   }
 
   confirmDelete() {
-    // Implementation for deleting appointment
+    // TODO: Implement delete functionality
+    this.closeDeleteModal();
   }
 } 

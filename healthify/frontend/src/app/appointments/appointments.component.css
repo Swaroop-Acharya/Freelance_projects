@@ -191,7 +191,7 @@ th {
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
 }
 
 .form-group label {
@@ -454,4 +454,14 @@ select#doctorId:focus {
   border-color: #80bdff !important;
   outline: 0 !important;
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+}
+
+.error-text {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.ng-invalid.ng-touched {
+  border-color: #dc2626;
 } 

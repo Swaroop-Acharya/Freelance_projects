@@ -90,6 +90,17 @@ public class NurseController {
                 .ok(new ApiResponse("Appointment created successfully", null, 200));
     }
 
+    @PutMapping("/appointment/{id}")
+    public ResponseEntity<?> updateAppointment(@PathVariable Long id, @RequestBody CreateAppointmentDTO appointmentDTO) {
+        try {
+            service.updateAppointment(id, appointmentDTO);
+            return ResponseEntity.ok(new ApiResponse("Appointment updated successfully", null, 200));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(new ApiResponse(e.getMessage(), null, 400));
+        }
+    }
+
     //list of all appointment schedules
     @RequestMapping("appointmentSchedules")
     public ResponseEntity<List<AppointmentSchedulesDTO>> getSchedules() {
