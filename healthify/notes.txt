@@ -77,4 +77,30 @@ rest let them to edit
 
 
 
+Doctor schedules
+GET http://localhost:8081/nurse/doctorSchedules/unAvailableNow with token
+[
+    {
+        "empCode": "D001",
+        "name": "Dr. Shiva",
+        "id": 15,
+        "startTime": "10:00:00",
+        "endTime": "11:00:00",
+        "workingDays": [
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY",
+            "FRIDAY"
+        ],
+        "nxtAvailableSlot": "2025-06-02T10:00:00"
+    }
+]
+
+GET http://localhost:8081/nurse/doctorSchedules/availableNow with token
+gives same list of results
+
+now 
+
+
 

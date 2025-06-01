@@ -10,7 +10,7 @@ import com.CMS.Project.Nurse.Repo.CreateAppointmentRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -29,6 +29,7 @@ public class DrService {
     private DoctorAvailabilityRepo availabilityRepo;
 
     // Save or update the doctor's availability schedule
+    @Transactional
     public void saveDoctorSchedule(DoctorScheduleRequestDTO request,Long id) {
         User doctor = userRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
@@ -62,6 +63,9 @@ public class DrService {
             availability.setClockOutReason(request.getClogoutReason());
             availability.setCreatedBy("doctor_" + doctor.getId());
             availability.setCreatedTime(LocalDateTime.now());
+
+            // ✅ This is the missing line!
+            availability.setWorkingDays(request.getWorkingDays());
 
             availabilityRepo.save(availability);
         }

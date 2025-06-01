@@ -306,6 +306,7 @@ public class NurseService {
         List<DoctorAvailability> availabilitylist = repo.findDoctorsUnAvailableNow(date, currentTime);
         for (DoctorAvailability doctorAvailability : availabilitylist) {
             DoctorSchedulesDTO dto = new DoctorSchedulesDTO();
+            dto.setEmpCode(doctorAvailability.getEmpCode());
             dto.setId(doctorAvailability.getId());
             dto.setName(doctorAvailability.getFullName());
             dto.setStartTime(doctorAvailability.getStartTime());

@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DoctorScheduleService, DoctorSchedule } from '../services/doctor-schedule.service';
+import { HttpClientModule } from '@angular/common/http';
 
 interface Doctor {
   id: string;
@@ -26,42 +28,21 @@ interface Appointment {
 @Component({
   selector: 'app-doctor-schedules',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './doctor-schedules.component.html',
   styleUrls: ['./doctor-schedules.component.css']
 })
-export class DoctorSchedulesComponent {
+export class DoctorSchedulesComponent implements OnInit {
   activeTab: 'all' | 'available' | 'unavailable' = 'all';
+  doctors: DoctorSchedule[] = [];
+  loading = false;
+  error: string | null = null;
 
-  doctors: Doctor[] = [
-    {
-      id: 'D001',
-      name: 'Dr. Alexander Pierce',
-      specialization: 'Cardiologist',
-      status: 'available',
-      workingHours: '09:00 AM - 05:00 PM',
-      workingDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
-      nextAvailable: 'Tomorrow, 10:00 AM'
-    },
-    {
-      id: 'D002',
-      name: 'Dr. Sunanda U',
-      specialization: 'Dermatologist',
-      status: 'unavailable',
-      workingHours: '10:00 AM - 04:00 PM',
-      workingDays: ['Mon', 'Wed', 'Fri'],
-      nextAvailable: 'Monday, 11:00 AM'
-    },
-    {
-      id: 'D003',
-      name: 'Dr. Hitesh Rana',
-      specialization: 'Neurologist',
-      status: 'available',
-      workingHours: '08:00 AM - 02:00 PM',
-      workingDays: ['Tue', 'Thu', 'Sat'],
-      nextAvailable: 'Today, 01:00 PM'
-    }
-  ];
+  constructor(private doctorScheduleService: DoctorScheduleService) {}
+
+  ngOnInit() {
+    this.loadDoctors();
+  }
 
   // Modal state and form model
   showAddModal = false;
@@ -78,17 +59,55 @@ export class DoctorSchedulesComponent {
 
   setActiveTab(tab: 'all' | 'available' | 'unavailable') {
     this.activeTab = tab;
+    this.loadDoctors();
   }
 
-  get filteredDoctors(): Doctor[] {
-    if (this.activeTab === 'all') {
-      return this.doctors;
+  loadDoctors() {
+    this.loading = true;
+    this.error = null;
+
+    let request$;
+    switch (this.activeTab) {
+      case 'available':
+        request$ = this.doctorScheduleService.getAvailableDoctors();
+        break;
+      case 'unavailable':
+        request$ = this.doctorScheduleService.getUnavailableDoctors();
+        break;
+      default:
+        request$ = this.doctorScheduleService.getAllDoctors();
     }
-    return this.doctors.filter(doc => doc.status === this.activeTab);
+
+    request$.subscribe({
+      next: (doctors) => {
+        this.doctors = doctors.map(doctor => ({
+          ...doctor,
+          specialization: 'General Medicine', // Static for now
+          workingHours: `${doctor.startTime} - ${doctor.endTime}`
+        }));
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading doctors:', error);
+        this.error = 'Failed to load doctor schedules';
+        this.loading = false;
+      }
+    });
   }
 
-  toggleAvailability(doctor: Doctor) {
-    doctor.status = doctor.status === 'available' ? 'unavailable' : 'available';
+  get filteredDoctors(): DoctorSchedule[] {
+    return this.doctors;
+  }
+
+  toggleAvailability(doctor: DoctorSchedule) {
+    // This would be implemented when the API supports toggling availability
+    console.log('Toggle availability for doctor:', doctor);
+  }
+
+  formatNextAvailable(dateTimeString: string): string {
+    if (!dateTimeString) return 'Not available';
+    const date = new Date(dateTimeString);
+    return date.toLocaleString();
   }
 
   addAppointment() {

@@ -10,6 +10,7 @@ import java.util.List;
 @Data
 public class DoctorSchedulesDTO {
 
+    String empCode;
     String name;
     Long id;
     LocalTime startTime;

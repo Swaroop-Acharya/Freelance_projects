@@ -25,13 +25,24 @@
     </button>
   </div>
 
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <p>Loading doctor schedules...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-state" *ngIf="error" role="alert">
+    <p>{{ error }}</p>
+    <button (click)="loadDoctors()">Retry</button>
+  </div>
+
   <!-- Doctors List -->
-  <div class="doctors-list">
+  <div class="doctors-list" *ngIf="!loading && !error">
     <div class="doctor-card" *ngFor="let doctor of filteredDoctors">
       <div class="doctor-header">
         <div class="doctor-info">
           <h3>{{ doctor.name }}</h3>
-          <p class="specialization">{{ doctor.specialization }} ID: {{ doctor.id }}</p>
+          <p class="specialization">{{ doctor.specialization || 'General Medicine' }} ID: {{ doctor.empCode }}</p>
         </div>
         <div class="status-badge" [class.available]="doctor.status === 'available'">
           {{ doctor.status === 'available' ? 'Available' : 'Unavailable' }}
@@ -41,7 +52,7 @@
       <div class="doctor-details">
         <div class="working-hours">
           <h4>Working Hours</h4>
-          <p class="hours">{{ doctor.workingHours }}</p>
+          <p class="hours">{{ doctor.startTime }} - {{ doctor.endTime }}</p>
           <div class="days">
             <span class="day" *ngFor="let day of doctor.workingDays">{{ day }}</span>
           </div>
@@ -49,7 +60,7 @@
 
         <div class="next-available">
           <h4>Next Available</h4>
-          <p>{{ doctor.nextAvailable }}</p>
+          <p>{{ formatNextAvailable(doctor.nxtAvailableSlot) }}</p>
         </div>
       </div>
 
@@ -63,5 +74,10 @@
         </button>
       </div>
     </div>
+  </div>
+
+  <!-- No Results State -->
+  <div class="no-results" *ngIf="!loading && !error && filteredDoctors.length === 0">
+    <p>No doctors found for the selected filter.</p>
   </div>
 </div> 

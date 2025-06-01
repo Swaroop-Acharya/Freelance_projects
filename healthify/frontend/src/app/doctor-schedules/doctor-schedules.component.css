@@ -47,144 +47,150 @@
   padding: 1rem;
 }
 
+.loading-state,
+.error-state,
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  margin: 1rem;
+  border-radius: 8px;
+}
+
+.loading-state {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.error-state {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.error-state button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.error-state button:hover {
+  background-color: #b91c1c;
+}
+
+.no-results {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  font-style: italic;
+}
+
 .doctor-card {
   background: white;
   border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 100%;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .doctor-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
 .doctor-info h3 {
   margin: 0;
   color: #1f2937;
-  font-size: 1.25rem;
-  font-weight: 600;
 }
 
 .specialization {
   color: #6b7280;
-  margin: 0.25rem 0 0 0;
-  font-size: 0.875rem;
+  margin: 0.25rem 0 0;
 }
 
 .status-badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 1rem;
-  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
   font-weight: 500;
-  background-color: #fee2e2;
-  color: #dc2626;
+  background-color: #dc2626;
+  color: white;
 }
 
 .status-badge.available {
-  background-color: #dcfce7;
-  color: #16a34a;
+  background-color: #059669;
 }
 
 .doctor-details {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1rem 0;
 }
 
-.working-hours {
-  flex: 1;
-}
-
-.working-hours h4 {
-  color: #4b5563;
-  font-size: 0.875rem;
-  font-weight: 500;
-  margin: 0 0 0.5rem 0;
+.working-hours h4,
+.next-available h4 {
+  margin: 0 0 0.5rem;
+  color: #374151;
 }
 
 .hours {
-  color: #1f2937;
-  font-size: 1rem;
   font-weight: 500;
-  margin: 0 0 0.25rem 0;
+  color: #1f2937;
 }
 
 .days {
   display: flex;
-  gap: 0.5rem;
   flex-wrap: wrap;
-  margin: 0;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .day {
-  color: #6b7280;
-  font-size: 0.875rem;
   background-color: #f3f4f6;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  color: #4b5563;
 }
 
 .doctor-actions {
   display: flex;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
 .action-button {
-  flex: 1;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
   border: none;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
+  border-radius: 6px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background-color 0.2s;
 }
 
 .view-schedule {
-  background-color: #f3f4f6;
-  color: #4b5563;
+  background-color: #e5e7eb;
+  color: #374151;
 }
 
 .view-schedule:hover {
-  background-color: #e5e7eb;
+  background-color: #d1d5db;
 }
 
 .toggle-availability {
-  background-color: #fee2e2;
-  color: #dc2626;
+  background-color: #dc2626;
+  color: white;
 }
 
 .toggle-availability.available {
-  background-color: #dcfce7;
-  color: #16a34a;
+  background-color: #059669;
 }
 
 .toggle-availability:hover {
-  opacity: 0.9;
-}
-
-.next-available {
-  text-align: right;
-  padding-left: 2rem;
-}
-
-.next-available h4 {
-  color: #4b5563;
-  font-size: 0.875rem;
-  font-weight: 500;
-  margin: 0 0 0.5rem 0;
-}
-
-.next-available p {
-  color: #1f2937;
-  font-size: 0.875rem;
-  margin: 0;
+  filter: brightness(0.9);
 }
 
 @media (max-width: 768px) {
