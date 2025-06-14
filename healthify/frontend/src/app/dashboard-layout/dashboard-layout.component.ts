@@ -6,7 +6,6 @@ import { DashboardComponent } from '../dashboard/dashboard.component';
 import { DoctorSchedulesComponent } from '../doctor-schedules/doctor-schedules.component';
 import { PatientsComponent } from '../patients/patients.component';
 import { AppointmentsComponent } from '../appointments/appointments.component';
-import { ProfileViewComponent } from '../profile-view/profile-view.component';
 import { NotificationsComponent } from '../notifications/notifications.component';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { StorageService } from '../services/storage.service';
@@ -30,7 +29,6 @@ interface UserProfile {
     DoctorSchedulesComponent,
     PatientsComponent,
     AppointmentsComponent,
-    ProfileViewComponent,
     NotificationsComponent
   ],
   templateUrl: './dashboard-layout.component.html',

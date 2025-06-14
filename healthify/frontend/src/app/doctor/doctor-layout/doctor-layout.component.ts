@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { NotificationsComponent } from '../notifications/notifications.component';
+import { NotificationsComponent } from '../../notifications/notifications.component';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-admin-layout',
+  selector: 'app-doctor-layout',
   standalone: true,
   imports: [CommonModule, RouterModule, NotificationsComponent, FormsModule],
   template: `
@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
       <nav class="top-navbar">
         <div class="navbar-left">
           <div class="company-name" [class.company-logo]="!sidebarOpen">
-            <span *ngIf="sidebarOpen">C2CAS Admin</span>
+            <span *ngIf="sidebarOpen">C2CAS Doctor</span>
             <img *ngIf="!sidebarOpen" src="assets/images/logo-sml.jpg" alt="C2CAS Logo" class="logo-image">
           </div>
           <button class="menu-toggle" (click)="toggleSidebar()">
@@ -38,15 +38,15 @@ import { FormsModule } from '@angular/forms';
           <!-- Profile -->
           <div class="profile-dropdown">
             <button class="profile-button" (click)="toggleProfile()">
-              <div class="profile-initials">AP</div>
+              <div class="profile-initials">Dr</div>
             </button>
             
             <div class="dropdown-menu" *ngIf="showProfile">
               <div class="profile-info">
-                <div class="profile-avatar">AP</div>
+                <div class="profile-avatar">Dr</div>
                 <div class="profile-details">
-                  <div class="profile-name">Nurse</div>
-                  <div class="profile-title">Plant Engineer</div>
+                  <div class="profile-name">Doctor</div>
+                  <div class="profile-title">Medical Staff</div>
                   <div class="member-since">Member since Nov 2022</div>
                 </div>
               </div>
@@ -73,7 +73,7 @@ import { FormsModule } from '@angular/forms';
       <!-- Sidebar -->
       <div class="sidebar" [class.sidebar-closed]="!sidebarOpen">
         <div class="user-profile">
-          <div class="user-avatar">AP</div>
+          <div class="user-avatar">Dr</div>
           <div class="user-info" *ngIf="sidebarOpen">
             <div class="user-name">Dr. Alexander Pierce</div>
             <div class="availability">
@@ -86,21 +86,21 @@ import { FormsModule } from '@angular/forms';
         <div class="menu-title" *ngIf="sidebarOpen">MAIN NAVIGATION</div>
         <ul class="menu-list">
           <li>
-            <button class="menu-item" routerLink="/admin/dashboard" routerLinkActive="active" data-tooltip="Dashboard">
+            <button class="menu-item" routerLink="/dashboard-doctor" routerLinkActive="active" data-tooltip="Dashboard">
               <i class="fas fa-dashboard"></i>
               <span class="menu-text" *ngIf="sidebarOpen">Dashboard</span>
             </button>
           </li>
           <li>
-            <button class="menu-item" routerLink="/admin/users" routerLinkActive="active" data-tooltip="Users">
-              <i class="fas fa-users"></i>
-              <span class="menu-text" *ngIf="sidebarOpen">Users</span>
+            <button class="menu-item" routerLink="/doctor-appointments/appointments" routerLinkActive="active" data-tooltip="Appointments">
+              <i class="fas fa-calendar"></i>
+              <span class="menu-text" *ngIf="sidebarOpen">Appointments</span>
             </button>
           </li>
           <li>
-            <button class="menu-item" routerLink="/admin/settings" routerLinkActive="active" data-tooltip="Settings">
-              <i class="fas fa-cog"></i>
-              <span class="menu-text" *ngIf="sidebarOpen">Settings</span>
+            <button class="menu-item" routerLink="/dashboard-doctor/medicine-request" routerLinkActive="active" data-tooltip="Medicine Request">
+              <i class="fas fa-pills"></i>
+              <span class="menu-text" *ngIf="sidebarOpen">Medicine Request</span>
             </button>
           </li>
         </ul>
@@ -557,530 +557,18 @@ import { FormsModule } from '@angular/forms';
       min-height: calc(100vh - 64px);
       margin-top: 64px;
     }
-
-    /* Dropdown Styles */
-    .notification-dropdown,
-    .profile-dropdown {
-      position: relative;
-    }
-
-    .dropdown-menu {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      margin-top: 0.5rem;
-      background-color: white;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      min-width: 300px;
-      z-index: 1000;
-      border: 1px solid #e2e8f0;
-    }
-
-    .dropdown-header {
-      padding: 1rem;
-      border-bottom: 1px solid #e2e8f0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .dropdown-header h3 {
-      margin: 0;
-      font-size: 1rem;
-      color: #1e293b;
-    }
-
-    .mark-all-read {
-      background: none;
-      border: none;
-      color: #3b82f6;
-      font-size: 0.875rem;
-      cursor: pointer;
-    }
-
-    .mark-all-read:hover {
-      color: #2563eb;
-    }
-
-    .notification-list {
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
-    .notification-item {
-      padding: 1rem;
-      display: flex;
-      gap: 1rem;
-      border-bottom: 1px solid #e2e8f0;
-      transition: background-color 0.2s;
-    }
-
-    .notification-item:hover {
-      background-color: #f8fafc;
-    }
-
-    .notification-item.unread {
-      background-color: #eff6ff;
-    }
-
-    .notification-icon {
-      width: 40px;
-      height: 40px;
-      background-color: #dbeafe;
-      color: #3b82f6;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .notification-content {
-      flex: 1;
-    }
-
-    .notification-text {
-      margin: 0 0 0.25rem 0;
-      color: #1e293b;
-      font-size: 0.875rem;
-    }
-
-    .notification-time {
-      color: #64748b;
-      font-size: 0.75rem;
-    }
-
-    .dropdown-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem 1rem;
-      color: #1e293b;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-
-    .dropdown-item:hover {
-      background-color: #f8fafc;
-      color: #3b82f6;
-    }
-
-    .dropdown-item i {
-      width: 1rem;
-      color: #64748b;
-    }
-
-    .dropdown-item:hover i {
-      color: #3b82f6;
-    }
-
-    .dropdown-divider {
-      height: 1px;
-      background-color: #e2e8f0;
-      margin: 0.5rem 0;
-    }
-
-    /* Statistics Grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .stat-card {
-      background-color: white;
-      border-radius: 8px;
-      padding: 1.5rem;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .stat-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .stat-info {
-      flex: 1;
-    }
-
-    .stat-value {
-      font-size: 2rem;
-      font-weight: 600;
-      color: #1f2937;
-      margin-bottom: 0.5rem;
-    }
-
-    .stat-info h3 {
-      color: #6b7280;
-      font-size: 0.875rem;
-      margin: 0;
-    }
-
-    .stat-icon {
-      width: 48px;
-      height: 48px;
-      background-color: #406e8d;
-      color: white;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-    }
-
-    /* Table Section */
-    .table-section {
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      padding: 1.5rem;
-    }
-
-    .table-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-    }
-
-    .search-box {
-      position: relative;
-      width: 300px;
-    }
-
-    .search-box i {
-      position: absolute;
-      left: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #6b7280;
-    }
-
-    .search-box input {
-      width: 100%;
-      padding: 0.75rem 1rem 0.75rem 2.5rem;
-      border: 1px solid #e5e7eb;
-      border-radius: 6px;
-      font-size: 0.875rem;
-    }
-
-    .search-box input:focus {
-      outline: none;
-      border-color: #406e8d;
-    }
-
-    .add-user-btn {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.25rem;
-      background-color: #406e8d;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 0.875rem;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .add-user-btn:hover {
-      background-color: #345a77;
-    }
-
-    .table-container {
-      overflow-x: auto;
-    }
-
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .data-table th {
-      background-color: #f9fafb;
-      padding: 1rem;
-      text-align: left;
-      font-weight: 600;
-      color: #374151;
-      font-size: 0.875rem;
-    }
-
-    .data-table td {
-      padding: 1rem;
-      border-top: 1px solid #e5e7eb;
-      color: #4b5563;
-      font-size: 0.875rem;
-    }
-
-    .user-cell {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .user-avatar {
-      width: 32px;
-      height: 32px;
-      background-color: #406e8d;
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.875rem;
-      font-weight: 600;
-    }
-
-    .user-info {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .user-name {
-      font-weight: 500;
-      color: #1f2937;
-    }
-
-    .user-id {
-      font-size: 0.75rem;
-      color: #6b7280;
-    }
-
-    .status-badge {
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 500;
-    }
-
-    .status-badge.active {
-      background-color: #dcfce7;
-      color: #16a34a;
-    }
-
-    .status-badge.inactive {
-      background-color: #fee2e2;
-      color: #dc2626;
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .action-btn {
-      width: 32px;
-      height: 32px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background-color 0.2s;
-    }
-
-    .action-btn.edit {
-      background-color: #e0f2fe;
-      color: #0369a1;
-    }
-
-    .action-btn.edit:hover {
-      background-color: #bae6fd;
-    }
-
-    .action-btn.delete {
-      background-color: #fee2e2;
-      color: #dc2626;
-    }
-
-    .action-btn.delete:hover {
-      background-color: #fecaca;
-    }
-
-    /* Profile View Styles */
-    .profile-view {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
-
-    .profile-content {
-      background: white;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 500px;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .profile-header {
-      padding: 1rem;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .profile-body {
-      padding: 1.5rem;
-    }
-
-    .profile-info {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .info-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .info-group label {
-      font-weight: 600;
-      color: #666;
-    }
-
-    /* Change Password View Styles */
-    .change-password-view {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
-
-    .change-password-content {
-      background: white;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 500px;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .change-password-header {
-      padding: 1rem;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .change-password-body {
-      padding: 1.5rem;
-    }
-
-    .form-group {
-      margin-bottom: 1rem;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      color: #666;
-    }
-
-    .form-group input {
-      width: 100%;
-      padding: 0.5rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-
-    .form-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-
-    .close-btn {
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-      color: #666;
-    }
-
-    .close-btn:hover {
-      color: #333;
-    }
   `]
 })
-export class AdminLayoutComponent {
+export class DoctorLayoutComponent implements OnInit {
   sidebarOpen = true;
   showNotifications = false;
   showProfile = false;
   unreadNotifications = 3;
   currentPage = 'Dashboard';
-  searchQuery = '';
-  showProfileView = false;
-  showChangePassword = false;
-  currentPassword = '';
-  newPassword = '';
-  confirmPassword = '';
 
   constructor(private router: Router) {}
 
-  // Sample data for the table
-  users = [
-    {
-      id: 'USR001',
-      name: 'John Doe',
-      initials: 'JD',
-      role: 'Doctor',
-      email: 'john.doe@example.com',
-      status: 'Active'
-    },
-    {
-      id: 'USR002',
-      name: 'Jane Smith',
-      initials: 'JS',
-      role: 'Nurse',
-      email: 'jane.smith@example.com',
-      status: 'Active'
-    },
-    {
-      id: 'USR003',
-      name: 'Mike Johnson',
-      initials: 'MJ',
-      role: 'Pharmacy Staff',
-      email: 'mike.johnson@example.com',
-      status: 'Inactive'
-    }
-  ];
-
-  get filteredUsers() {
-    if (!this.searchQuery) return this.users;
-    const query = this.searchQuery.toLowerCase();
-    return this.users.filter(user => 
-      user.name.toLowerCase().includes(query) ||
-      user.email.toLowerCase().includes(query) ||
-      user.role.toLowerCase().includes(query)
-    );
-  }
-
-  onSearch() {
-    // Additional search logic if needed
-  }
+  ngOnInit(): void {}
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
@@ -1101,12 +589,12 @@ export class AdminLayoutComponent {
   }
 
   navigateToProfile() {
-    this.router.navigate(['/admin/profile']);
+    this.router.navigate(['/dashboard-doctor/profile']);
     this.showProfile = false;
   }
 
   navigateToChangePassword() {
-    this.router.navigate(['/admin/change-password']);
+    this.router.navigate(['/dashboard-doctor/change-password']);
     this.showProfile = false;
   }
 
@@ -1115,17 +603,5 @@ export class AdminLayoutComponent {
     console.log('Logout clicked');
     this.router.navigate(['/login']);
     this.showProfile = false;
-  }
-
-  onChangePassword() {
-    if (this.newPassword !== this.confirmPassword) {
-      alert('New passwords do not match');
-      return;
-    }
-    // TODO: Implement password change logic
-    this.showChangePassword = false;
-    this.currentPassword = '';
-    this.newPassword = '';
-    this.confirmPassword = '';
   }
 } 

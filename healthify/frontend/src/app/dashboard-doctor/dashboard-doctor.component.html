@@ -1,0 +1,153 @@
+
+
+<div class="p-6 bg-gray-100 min-h-screen">
+  <h1 class="text-3xl font-semibold text-gray-800 mb-6">Dashboard</h1>
+
+  <!-- Statistics Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Today's Patients -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden group transition-colors duration-200 cursor-pointer hover:bg-[#4a88b5]"
+         (mouseenter)="todayPatientsHover = true" (mouseleave)="todayPatientsHover = false">
+      <div class="p-6 flex items-center justify-between">
+          <div>
+          <div class="text-6xl font-bold transition-colors duration-200 group-hover:text-white text-gray-800">24</div>
+          <div class="text-lg transition-colors duration-200 group-hover:text-white text-gray-600">Today's Patients</div>
+        </div>
+        <img [src]="todayPatientsHover ? 'assets/images/appointments-white.png' : 'assets/images/appointments-blue.png'"
+             class="w-12 h-12 ml-4 transition-all duration-200" alt="Today's Patients">
+      </div>
+      <a href="#" class="small-box-footer block bg-[#4a88b5] text-white p-2 text-sm text-center hover:bg-[#3b719a] transition-colors duration-200">
+        More info <i class="fa fa-arrow-circle-right ml-2"></i>
+      </a>
+    </div>
+
+    <!-- Total Patients -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden group transition-colors duration-200 cursor-pointer hover:bg-[#4a88b5]"
+         (mouseenter)="totalPatientsHover = true" (mouseleave)="totalPatientsHover = false">
+      <div class="p-6 flex items-center justify-between">
+        <div>
+          <div class="text-6xl font-bold transition-colors duration-200 group-hover:text-white text-gray-800">12</div>
+          <div class="text-lg transition-colors duration-200 group-hover:text-white text-gray-600">Total Patients</div>
+        </div>
+        <img [src]="totalPatientsHover ? 'assets/images/patient_line_white.png' : 'assets/images/patient_line.png'"
+             class="w-12 h-12 ml-4 transition-all duration-200" alt="Total Patients">
+      </div>
+      <a href="#" class="small-box-footer block bg-[#4a88b5] text-white p-2 text-sm text-center hover:bg-[#3b719a] transition-colors duration-200">
+        More info <i class="fa fa-arrow-circle-right ml-2"></i>
+      </a>
+    </div>
+
+    <!-- Requested Medicine -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden group transition-colors duration-200 cursor-pointer hover:bg-[#4a88b5]"
+         (mouseenter)="requestedMedicineHover = true" (mouseleave)="requestedMedicineHover = false">
+      <div class="p-6 flex items-center justify-between">
+          <div>
+          <div class="text-6xl font-bold transition-colors duration-200 group-hover:text-white text-gray-800">8</div>
+          <div class="text-lg transition-colors duration-200 group-hover:text-white text-gray-600">Requested Medicine</div>
+        </div>
+        <img [src]="requestedMedicineHover ? 'assets/images/prescription_white.png' : 'assets/images/prescription_blue.png'"
+             class="w-12 h-12 ml-4 transition-all duration-200" alt="Requested Medicine">
+      </div>
+      <a href="#" class="small-box-footer block bg-[#4a88b5] text-white p-2 text-sm text-center hover:bg-[#3b719a] transition-colors duration-200">
+        More info <i class="fa fa-arrow-circle-right ml-2"></i>
+      </a>
+    </div>
+
+    <!-- Today's Prescriptions -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden group transition-colors duration-200 cursor-pointer hover:bg-[#4a88b5]"
+         (mouseenter)="todaysPrescriptionsHover = true" (mouseleave)="todaysPrescriptionsHover = false">
+      <div class="p-6 flex items-center justify-between">
+          <div>
+          <div class="text-6xl font-bold transition-colors duration-200 group-hover:text-white text-gray-800">156</div>
+          <div class="text-lg transition-colors duration-200 group-hover:text-white text-gray-600">Today's Prescriptions</div>
+        </div>
+        <img [src]="todaysPrescriptionsHover ? 'assets/images/prescription_white.png' : 'assets/images/prescription_blue.png'"
+             class="w-12 h-12 ml-4 transition-all duration-200" alt="Today's Prescriptions">
+      </div>
+      <a href="#" class="small-box-footer block bg-[#4a88b5] text-white p-2 text-sm text-center hover:bg-[#3b719a] transition-colors duration-200">
+        More info <i class="fa fa-arrow-circle-right ml-2"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Low Stock Medicines -->
+  <div class="bg-white rounded-lg shadow-md mb-8">
+    <div class="w-full bg-pink-100 rounded-t-lg py-3 px-6">
+      <h2 class="text-xl font-semibold" style="color: #4a88b5;">Low Stock Medicine</h2>
+    </div>
+    <div class="p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="bg-white border rounded-lg p-4 flex flex-col gap-4" *ngFor="let medicine of lowStackMedicines">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-lg font-semibold text-gray-800">{{medicine.name}}</h3>
+            <span class="ml-2 px-3 py-1 rounded bg-yellow-100 text-yellow-800 text-sm font-semibold">{{medicine.quantity}} left</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex flex-col gap-1">
+              <p class="text-gray-600">Expires: {{medicine.expiryDate}}</p>
+              <p class="text-gray-600">Supplier: {{medicine.supplier}}</p>
+            </div>
+            <button class="ml-4 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded transition-colors duration-200 font-semibold" (click)="openReorderModal(medicine)">
+              Reorder
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Today's Appointments -->
+  <!-- Removed as per user request -->
+
+  <!-- Reorder Modal -->
+  <div class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur bg-white bg-opacity-30" *ngIf="showReorderModal" (click)="closeReorderModal($event)">
+    <div class="relative w-full max-w-md mx-auto bg-white rounded-md shadow-lg" (click)="$event.stopPropagation()">
+      <div class="w-full bg-[#4a88b5] rounded-t-md px-6 py-4">
+        <div class="flex justify-between items-center">
+          <h3 class="text-lg font-medium text-white">Reorder Medicine</h3>
+          <button class="text-white hover:text-gray-200" (click)="closeReorderModal($event)">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+      <form class="p-5" (ngSubmit)="submitReorder()" #reorderForm="ngForm">
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="medicineName">Medicine Name</label>
+          <input type="text" id="medicineName" name="medicineName" [(ngModel)]="reorderRequest.medicineName" readonly
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100">
+        </div>
+        <div class="mb-4 flex gap-4">
+          <div class="w-1/2">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="quantity">Quantity</label>
+            <input type="number" id="quantity" name="quantity" [(ngModel)]="reorderRequest.quantity" required min="1"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+          </div>
+          <div class="w-1/2">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="priority">Priority</label>
+            <select id="priority" name="priority" [(ngModel)]="reorderRequest.priority" required
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="notes">Notes</label>
+          <textarea id="notes" name="notes" [(ngModel)]="reorderRequest.notes" rows="3"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+        </div>
+        <div class="flex justify-end space-x-3">
+          <button type="button" (click)="closeReorderModal($event)"
+            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            Cancel
+          </button>
+          <button type="submit"
+            class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            Submit Request
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> 

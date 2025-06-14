@@ -1,0 +1,696 @@
+<!-- Title Section -->
+<div class="p-4">
+  <h1 class="text-2xl font-semibold text-black">Doctor Notes</h1>
+</div>
+
+<!-- Main Content Container -->
+<div class=" min-h-screen">
+  <div class="bg-white mx-4 my-4 rounded-lg shadow">
+    <div class="flex flex-col md:flex-row gap-8 p-6">
+      <!-- Left: Profile Info (icon top left, info right) -->
+      <div class="flex w-full md:w-1/3 items-start gap-4">
+        <div class="w-16 h-16 rounded-full bg-[rgba(85,70,153,0.9)] flex items-center justify-center text-white text-3xl font-bold shadow mt-1">
+          {{ patient.name.split(' ')[0].charAt(0) }}{{ patient.name.split(' ')[1] ? patient.name.split(' ')[1].charAt(0) : '' }}
+        </div>
+        <div class="flex flex-col gap-2 justify-center ml-2" style="color: rgba(85,70,153,0.9)">
+          <span class="font-bold text-lg">{{patient.name}}</span>
+          <span class="flex items-center gap-2"><i class="fas fa-user"></i> Aged {{patient.age}} Years</span>
+          <span class="flex items-center gap-2"><i class="fas fa-calendar-alt"></i> {{patient.dob}}</span>
+          <span class="flex items-center gap-2"><i class="fas fa-phone-alt"></i> {{patient.phone}}</span>
+        </div>
+      </div>
+
+      <!-- Right: Appointment Info -->
+      <div class="flex-1">
+        <div class="border border-gray-200 rounded-lg shadow p-6 relative bg-white">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <span class="text-lg font-semibold" style="color: rgba(85,70,153,0.9)">{{appointment.number}}</span>
+            </div>
+            <div class="flex flex-col items-end">
+              <span class="ml-2 bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold mt-2" style="background-color: #fde8e8; color: #e53e3e;">{{appointment.type}}</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-8 mb-4">
+            <span class="flex items-center gap-2 text-gray-600 text-sm"><i class="fas fa-calendar-alt"></i> {{appointment.date}} {{appointment.time}} <span class="text-xs text-gray-400">({{appointment.duration}})</span></span>
+            <span class="flex items-center gap-2 text-gray-600 text-sm"><i class="fas fa-hospital"></i> Synlog Hospital</span>
+          </div>
+          <div class="flex gap-4 mb-4">
+            <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full flex items-center gap-2"><i class="fas fa-check"></i>Completed</button>
+            <button class="text-white font-bold py-2 px-4 rounded-full flex items-center gap-2" style="background-color: rgba(85,70,153,0.9)"><i class="fas fa-file-invoice-dollar"></i>Billing</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs Section -->
+    <div class="mt-8 px-6 pb-6">
+      <div class="flex gap-4 mb-4">
+        <button (click)="selectTab('notes')" 
+          [ngClass]="{
+            'bg-[rgba(85,70,153,0.9)] text-white': activeTab === 'notes', 
+            'bg-[rgba(85,70,153,0.1)] text-[rgba(85,70,153,0.9)]': activeTab !== 'notes'
+          }" 
+          class="px-6 py-3 rounded-full text-lg font-semibold focus:outline-none transition-colors duration-200">
+          Case Notes
+        </button>
+        <button (click)="selectTab('history')" 
+          [ngClass]="{
+            'bg-[rgba(85,70,153,0.9)] text-white': activeTab === 'history', 
+            'bg-[rgba(85,70,153,0.1)] text-[rgba(85,70,153,0.9)]': activeTab !== 'history'
+          }" 
+          class="px-6 py-3 rounded-full text-lg font-semibold focus:outline-none transition-colors duration-200">
+          Case History
+        </button>
+        <button (click)="selectTab('documents')" 
+          [ngClass]="{
+            'bg-[rgba(85,70,153,0.9)] text-white': activeTab === 'documents', 
+            'bg-[rgba(85,70,153,0.1)] text-[rgba(85,70,153,0.9)]': activeTab !== 'documents'
+          }" 
+          class="px-6 py-3 rounded-full text-lg font-semibold focus:outline-none transition-colors duration-200">
+          Documents
+        </button>
+      </div>
+      <div class="bg-white border border-gray-200 rounded p-4 min-h-[120px]">
+        <ng-container [ngSwitch]="activeTab">
+          <div *ngSwitchCase="'notes'">
+            <!-- Nested Tabs for Case Notes -->
+            <div class="flex gap-4 mb-0 border-b border-gray-200">
+              <button (click)="selectNestedTab('overview')" 
+                [ngClass]="{
+                  'text-green-600 border-b-2 border-green-600': activeNestedTab === 'overview',
+                  'text-gray-600': activeNestedTab !== 'overview'
+                }" 
+                class="px-4 py-2 font-medium focus:outline-none transition-colors duration-200 flex items-center gap-2">
+                <img [src]="activeNestedTab === 'overview' ? 'assets/images/overview-icon-green.png' : 'assets/images/overview-icon-grey.png'" alt="Overview" class="w-5 h-5" /> Overview
+              </button>
+              <button (click)="selectNestedTab('body')" 
+                [ngClass]="{
+                  'text-green-600 border-b-2 border-green-600': activeNestedTab === 'body',
+                  'text-gray-600': activeNestedTab !== 'body'
+                }" 
+                class="px-4 py-2 font-medium focus:outline-none transition-colors duration-200 flex items-center gap-2">
+                <img [src]="activeNestedTab === 'body' ? 'assets/images/body-icon-green.png' : 'assets/images/body-icon-grey.png'" alt="Body Template" class="w-5 h-5" /> Body Template
+              </button>
+              <button (click)="selectNestedTab('prescription')" 
+                [ngClass]="{
+                  'text-green-600 border-b-2 border-green-600': activeNestedTab === 'prescription',
+                  'text-gray-600': activeNestedTab !== 'prescription'
+                }" 
+                class="px-4 py-2 font-medium focus:outline-none transition-colors duration-200 flex items-center gap-2">
+                <img [src]="activeNestedTab === 'prescription' ? 'assets/images/prescription_tab-green.png' : 'assets/images/prescription_tab-grey.png'" alt="Prescription" class="w-5 h-5" /> Prescription
+              </button>
+              <button (click)="selectNestedTab('immediate')" 
+                [ngClass]="{
+                  'text-green-600 border-b-2 border-green-600': activeNestedTab === 'immediate',
+                  'text-gray-600': activeNestedTab !== 'immediate'
+                }" 
+                class="px-4 py-2 font-medium focus:outline-none transition-colors duration-200 flex items-center gap-2">
+                <img [src]="activeNestedTab === 'immediate' ? 'assets/images/immediate-tab-green.png' : 'assets/images/immediate-tab-grey.png'" alt="Immediate" class="w-5 h-5" /> Immediate
+              </button>
+              <button (click)="selectNestedTab('assessment')" 
+                [ngClass]="{
+                  'text-green-600 border-b-2 border-green-600': activeNestedTab === 'assessment',
+                  'text-gray-600': activeNestedTab !== 'assessment'
+                }" 
+                class="px-4 py-2 font-medium focus:outline-none transition-colors duration-200 flex items-center gap-2">
+                <img [src]="activeNestedTab === 'assessment' ? 'assets/images/assessment-icon-green.png' : 'assets/images/assessment-icon-grey.png'" alt="Assessment" class="w-5 h-5" /> Assessment
+              </button>
+            </div>
+
+            <!-- Nested Tab Content -->
+            <div [ngSwitch]="activeNestedTab" class="mt-6">
+              <div *ngSwitchCase="'overview'" class="space-y-6">
+                <!-- Rich Text Editor -->
+                <div class="border border-gray-200 rounded-lg">
+                  <div class="richText">
+                    <div class="richText-toolbar border-b border-gray-200">
+                      <ul class="flex flex-wrap gap-1 p-2">
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="bold" title="Bold" name="bold" aria-label="Bold" aria-role="button"><span class="fa fa-bold"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="italic" title="Italic" name="italic" aria-label="Italic" aria-role="button"><span class="fa fa-italic"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="underline" title="Underline" name="underline" aria-label="Underline" aria-role="button"><span class="fa fa-underline"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="justifyLeft" title="Align left" name="alignLeft" aria-label="Align left" aria-role="button"><span class="fa fa-align-left"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="justifyCenter" title="Align centered" name="alignCenter" aria-label="Align centered" aria-role="button"><span class="fa fa-align-center"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="justifyRight" title="Align right" name="alignRight" aria-label="Align right" aria-role="button"><span class="fa fa-align-right"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="justifyFull" title="Justify" name="justify" aria-label="Justify" aria-role="button"><span class="fa fa-align-justify"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="insertOrderedList" title="Ordered list" name="addOrderedList" aria-label="Ordered list" aria-role="button"><span class="fa fa-list-ol"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="insertUnorderedList" title="Unordered list" name="addUnorderedList" aria-label="Unordered list" aria-role="button"><span class="fa fa-list"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Font" name="addFont" aria-label="Font" aria-role="button"><span class="fa fa-font"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Font size" name="addFontSize" aria-label="Font size" aria-role="button"><span class="fa fa-text-height"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Heading/title" name="addHeading" aria-label="Heading/title" aria-role="button"><span class="fa fa-header fa-heading"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Font color" name="addFontColor" aria-label="Font color" aria-role="button"><span class="fa fa-pencil fa-pencil-alt"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Background color" name="addBackgroundColor" aria-label="Background color" aria-role="button"><span class="fa fa-paint-brush"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Add image" name="addImage" aria-label="Add image" aria-role="button"><span class="fa fa-image"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Add file" name="addFile" aria-label="Add file" aria-role="button"><span class="fa fa-file-text-o far fa-file-alt"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Add video" name="addVideo" aria-label="Add video" aria-role="button"><span class="fa fa-video-camera fa-video"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Add URL" name="addURL" aria-label="Add URL" aria-role="button"><span class="fa fa-link"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Add table" name="addTable" aria-label="Add table" aria-role="button"><span class="fa fa-table"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="removeFormat" title="Remove styles" name="removeStyles" aria-label="Remove styles" aria-role="button"><span class="fa fa-recycle"></span></a></li>
+                        <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="toggleCode" title="Show HTML code" name="code" aria-label="Show HTML code" aria-role="button"><span class="fa fa-code"></span></a></li>
+                      </ul>
+                    </div>
+                    <div 
+                      class="richText-editor min-h-[200px] p-4 border border-gray-200 rounded-md bg-white" 
+                      contenteditable="true" 
+                      [(ngModel)]="overviewNotes" 
+                      (input)="onOverviewNotesChange($event)"
+                      style="outline: none;"
+                      role="textbox"
+                      aria-multiline="true"
+                      spellcheck="true"
+                    ></div>
+                  </div>
+                </div>
+
+                <!-- Symptoms Section -->
+                <div class="space-y-4">
+                  <div class="w-full md:w-1/3">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Symptoms</label>
+                    <select class="w-full border border-gray-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[rgba(85,70,153,0.9)]">
+                      <option value="">Select</option>
+                      <option value="sympt1">Symptom 1</option>
+                      <option value="sympt2">Symptom 2</option>
+                      <option value="sympt3">Symptom 3</option>
+                      <option value="sympt4">Symptom 4</option>
+                    </select>
+                  </div>
+                  <div class="w-full">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                    <textarea class="w-full border border-gray-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[rgba(85,70,153,0.9)]" rows="3"></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div *ngSwitchCase="'body'">
+                <div class="space-y-4">
+                  <h2 class="text-lg font-semibold">Body Template</h2>
+                  <p class="text-gray-700">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                </div>
+              </div>
+
+              <div *ngSwitchCase="'prescription'">
+                <div class="space-y-6">
+                  <!-- Add Medicine Table -->
+                  <table class="min-w-full border border-[rgba(26,115,232,0.5)] rounded mb-4">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Medicine</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Dosage</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Frequency</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Day</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Instruction</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Add</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">
+                          <input type="text" class="w-full rounded px-2 py-1 focus:outline-none" />
+                        </td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">
+                          <div class="flex gap-2">
+                            <input type="text" class="w-2/3 rounded px-2 py-1 focus:outline-none" />
+                            <select class="w-1/3 rounded px-2 py-1 focus:outline-none">
+                              <option>mg</option>
+                              <option>ml</option>
+                            </select>
+                          </div>
+                        </td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">
+                          <input type="text" class="w-full rounded px-2 py-1 focus:outline-none" />
+                        </td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">
+                          <input type="text" class="w-full rounded px-2 py-1 focus:outline-none" />
+                        </td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">
+                          <select class="w-full rounded px-2 py-1 focus:outline-none">
+                            <option>After Food</option>
+                            <option>Before Food</option>
+                          </select>
+                        </td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-center">
+                          <button class="bg-green-600 text-white rounded px-3 py-1 cursor-pointer"><i class="fas fa-plus"></i></button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <!-- Medicines List Table -->
+                  <table class="min-w-full border border-[rgba(26,115,232,0.5)] rounded">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Medicine</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Dosage</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Frequency</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Day</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Instruction</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">Metaformin</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">1000mg</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">1-0-1</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">10 Days</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">Before Food</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-center">
+                          <button class="text-blue-600 hover:underline mr-2"><i class="fas fa-edit"></i></button>
+                          <button class="text-gray-400 hover:underline"><i class="fas fa-trash"></i></button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">Hydrochlorothiazzide</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">25mg</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">0-0-1</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">3 Days</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">After Food</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-center">
+                          <button class="text-blue-600 hover:underline mr-2"><i class="fas fa-edit"></i></button>
+                          <button class="text-gray-400 hover:underline"><i class="fas fa-trash"></i></button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div *ngSwitchCase="'immediate'">
+                <div class="space-y-6">
+                  <!-- Add Item Table -->
+                  <table class="min-w-full border border-[rgba(26,115,232,0.5)] rounded mb-4">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Item name</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Item used</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Quantity used</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Add</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">
+                          <select class="w-full rounded px-2 py-1 focus:outline-none">
+                            <option>Consumable</option>
+                            <option>Medication</option>
+                          </select>
+                        </td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">
+                          <input type="text" class="w-full rounded px-2 py-1 focus:outline-none" />
+                        </td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">
+                          <input type="text" class="w-full rounded px-2 py-1 focus:outline-none" />
+                        </td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-center">
+                          <button class="bg-green-600 text-white rounded px-3 py-1 cursor-pointer hover:cursor-pointer"><i class="fas fa-plus"></i></button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <!-- Items List Table -->
+                  <table class="min-w-full border border-[rgba(26,115,232,0.5)] rounded">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Item name</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Item used</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Quantity used</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">Consumable</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">-</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">-</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">
+                          <div class="flex gap-2">
+                            <button class="text-blue-600 hover:text-blue-700"><i class="fas fa-edit"></i></button>
+                            <button class="text-red-600 hover:text-red-700"><i class="fas fa-trash"></i></button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <!-- Textarea and Symptoms Dropdown -->
+                  <div class="space-y-4">
+                    <div class="w-full">
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                      <div class="richText">
+                        <div class="richText-toolbar border-b border-gray-200">
+                          <ul class="flex flex-wrap gap-1 p-2">
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="bold" title="Bold" name="bold" aria-label="Bold" aria-role="button"><span class="fa fa-bold"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="italic" title="Italic" name="italic" aria-label="Italic" aria-role="button"><span class="fa fa-italic"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="underline" title="Underline" name="underline" aria-label="Underline" aria-role="button"><span class="fa fa-underline"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="justifyLeft" title="Align left" name="alignLeft" aria-label="Align left" aria-role="button"><span class="fa fa-align-left"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="justifyCenter" title="Align centered" name="alignCenter" aria-label="Align centered" aria-role="button"><span class="fa fa-align-center"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="justifyRight" title="Align right" name="alignRight" aria-label="Align right" aria-role="button"><span class="fa fa-align-right"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="justifyFull" title="Justify" name="justify" aria-label="Justify" aria-role="button"><span class="fa fa-align-justify"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="insertOrderedList" title="Ordered list" name="addOrderedList" aria-label="Ordered list" aria-role="button"><span class="fa fa-list-ol"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="insertUnorderedList" title="Unordered list" name="addUnorderedList" aria-label="Unordered list" aria-role="button"><span class="fa fa-list"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Font" name="addFont" aria-label="Font" aria-role="button"><span class="fa fa-font"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Font size" name="addFontSize" aria-label="Font size" aria-role="button"><span class="fa fa-text-height"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Heading/title" name="addHeading" aria-label="Heading/title" aria-role="button"><span class="fa fa-header fa-heading"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Font color" name="addFontColor" aria-label="Font color" aria-role="button"><span class="fa fa-pencil fa-pencil-alt"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Background color" name="addBackgroundColor" aria-label="Background color" aria-role="button"><span class="fa fa-paint-brush"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Add image" name="addImage" aria-label="Add image" aria-role="button"><span class="fa fa-image"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Add file" name="addFile" aria-label="Add file" aria-role="button"><span class="fa fa-file-text-o far fa-file-alt"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Add video" name="addVideo" aria-label="Add video" aria-role="button"><span class="fa fa-video-camera fa-video"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Add URL" name="addURL" aria-label="Add URL" aria-role="button"><span class="fa fa-link"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" title="Add table" name="addTable" aria-label="Add table" aria-role="button"><span class="fa fa-table"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="removeFormat" title="Remove styles" name="removeStyles" aria-label="Remove styles" aria-role="button"><span class="fa fa-recycle"></span></a></li>
+                            <li><a class="richText-btn hover:bg-blue-50 p-2 rounded text-blue-600 hover:text-blue-700" data-command="toggleCode" title="Show HTML code" name="code" aria-label="Show HTML code" aria-role="button"><span class="fa fa-code"></span></a></li>
+                          </ul>
+                        </div>
+                        <div 
+                          class="richText-editor min-h-[200px] p-4 border border-gray-200 rounded-md bg-white" 
+                          contenteditable="true" 
+                          [(ngModel)]="immediateNotes" 
+                          (input)="onImmediateNotesChange($event)"
+                          style="outline: none;"
+                          role="textbox"
+                          aria-multiline="true"
+                          spellcheck="true"
+                        ></div>
+                      </div>
+                    </div>
+                    <div class="w-full md:w-1/3">
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Symptoms</label>
+                      <select class="w-full border border-gray-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[rgba(85,70,153,0.9)]">
+                        <option value="Select11">Select</option>
+                        <option value="sympt1">Neurological</option>
+                        <option value="sympt2">Headache</option>
+                        <option value="sympt3">Dizziness / Vertigo</option>
+                        <option value="sympt4">sympt4</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div *ngSwitchCase="'assessment'">
+                <div class="space-y-6">
+                  <!-- Add Assessment Table -->
+                  <table class="min-w-full border border-[rgba(26,115,232,0.5)] rounded mb-4">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Name</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Test</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Area</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Purpose</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Notes</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Add</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">
+                          <select class="w-full rounded px-2 py-1 focus:outline-none">
+                            <option value="Select11">Select</option>
+                            <option value="gds">General Diabetes Screening</option>
+                            <option value="mc1">Microvascular Complication</option>
+                          </select>
+                        </td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">
+                          <select class="w-full rounded px-2 py-1 focus:outline-none">
+                            <option value="Select11">Select</option>
+                            <option value="5mg">Fasting Blood Glucose (FBG)</option>
+                            <option value="10mg">Complete Blood Count (CBC)</option>
+                          </select>
+                        </td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">
+                          <select class="w-full rounded px-2 py-1 focus:outline-none">
+                            <option value="Select11">Select</option>
+                            <option value="hd1">Head</option>
+                            <option value="fhd1">Forehead</option>
+                            <option value="eyes1">Eyes</option>
+                            <option value="nose1">Nose</option>
+                          </select>
+                        </td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">
+                          <select class="w-full rounded px-2 py-1 focus:outline-none">
+                            <option value="Select11">Select</option>
+                            <option value="prps1">Purpose1</option>
+                            <option value="prps2">Purpose2</option>
+                          </select>
+                        </td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">
+                          <textarea class="w-full rounded px-2 py-1 focus:outline-none" rows="2"></textarea>
+                        </td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-center">
+                          <button class="bg-green-600 text-white rounded px-3 py-1">+</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <!-- Assessments List Table -->
+                  <table class="min-w-full border border-[rgba(26,115,232,0.5)] rounded">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Name</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Test</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Area</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Purpose</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Notes</th>
+                        <th class="border border-[rgba(26,115,232,0.5)] px-3 py-2 text-[#1a4b8c]">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">General Diabetes Screening (Baseline & Regular)</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">Fasting Blood Glucose (FBG)</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">Body</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">Diagnosing diabetes/prediabetes</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">Before Food</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">
+                          <div class="flex gap-2">
+                            <button class="text-blue-600 hover:text-blue-700"><i class="fas fa-edit"></i></button>
+                            <button class="text-red-600 hover:text-red-700"><i class="fas fa-trash"></i></button>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">General Diabetes Screening (Baseline & Regular)</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">Fasting Blood Glucose (FBG)</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">Body</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">Diagnosing diabetes/prediabetes</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">After Food</td>
+                        <td class="border border-[rgba(26,115,232,0.5)] px-3 py-2">
+                          <div class="flex gap-2">
+                            <button class="text-blue-600 hover:text-blue-700"><i class="fas fa-edit"></i></button>
+                            <button class="text-red-600 hover:text-red-700"><i class="fas fa-trash"></i></button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngSwitchCase="'history'">
+            <p>222</p>
+          </div>
+
+          <div *ngSwitchCase="'documents'">
+            <div class="flex gap-6">
+              <!-- Left: Vertical Navigation -->
+              <div class="w-64 bg-[#fbfbfb] rounded-lg border border-gray-200">
+                <nav class="p-4 flex flex-col items-center justify-center h-full">
+                  <button (click)="selectDocumentType('lab-reports')" 
+                    [ngClass]="{
+                      'text-green-600 border-r-2 border-green-600 border-b border-gray-300': activeDocumentType === 'lab-reports',
+                      'text-black border-b border-gray-300': activeDocumentType !== 'lab-reports'
+                    }"
+                    class="w-full text-center px-4 py-3 flex items-center justify-center transition-colors">
+                    <span>Lab Reports</span>
+                  </button>
+                  <button (click)="selectDocumentType('medical-certificate')"
+                    [ngClass]="{
+                      'text-green-600 border-r-2 border-green-600 border-b border-gray-300': activeDocumentType === 'medical-certificate',
+                      'text-black border-b border-gray-300': activeDocumentType !== 'medical-certificate'
+                    }"
+                    class="w-full text-center px-4 py-3 flex items-center justify-center transition-colors">
+                    <span>Medical Certificate</span>
+                  </button>
+                </nav>
+              </div>
+
+              <!-- Right: Content Area -->
+              <div class="flex-1 bg-white rounded-lg border border-gray-200 p-6">
+                <ng-container [ngSwitch]="activeDocumentType">
+                  <!-- Lab Reports Content -->
+                  <div *ngSwitchCase="'lab-reports'">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Lab Reports</h2>
+                    <div class="border-b border-gray-200 mb-6"></div>
+
+                    <!-- Upload Form -->
+                    <div class="mb-8">
+                      <div class="flex gap-6 items-end">
+                        <div class="flex-1">
+                          <label class="block text-sm font-medium text-gray-700 mb-2">Report Name</label>
+                          <input type="text" 
+                                 class="w-full border border-gray-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[rgba(85,70,153,0.9)]"
+                                 placeholder="Enter report name">
+                                  </div>
+                        <div class="flex-1">
+                          <label class="block text-sm font-medium text-gray-700 mb-2">Upload File</label>
+                          <input type="file" 
+                                 class="w-full border border-gray-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[rgba(85,70,153,0.9)]">
+                                </div>
+                        <button class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition-colors">
+                          Upload
+                        </button>
+                            </div>
+                          </div>
+                          
+                    <!-- Table Section -->
+                    <div class="bg-white rounded-lg">
+                      <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center gap-2">
+                          <span class="text-sm text-gray-600">Show</span>
+                          <select class="border border-gray-200 rounded-md px-2 py-1 text-sm">
+                            <option>10</option>
+                            <option>25</option>
+                            <option>50</option>
+                                </select>
+                          <span class="text-sm text-gray-600">entries</span>
+                        </div>
+                        <div class="relative">
+                          <input type="text" 
+                                 placeholder="Search:" 
+                                 class="border border-gray-200 rounded-md pl-8 pr-4 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[rgba(85,70,153,0.9)]">
+                          <i class="fas fa-search absolute left-3 top-2 text-gray-400"></i>
+                        </div>
+                      </div>
+                      
+                      <div class="overflow-x-auto">
+                        <table class="min-w-full border border-[rgba(26,115,232,0.5)]">
+                                <thead>
+                            <tr class="bg-gray-50">
+                              <th class="border-b border-r border-[rgba(26,115,232,0.5)] px-4 py-3 text-left text-sm font-medium text-[#1a4b8c]">Report Name</th>
+                              <th class="border-b border-r border-[rgba(26,115,232,0.5)] px-4 py-3 text-left text-sm font-medium text-[#1a4b8c]">File</th>
+                              <th class="border-b border-r border-[rgba(26,115,232,0.5)] px-4 py-3 text-left text-sm font-medium text-[#1a4b8c]">Uploaded Date</th>
+                              <th class="border-b border-[rgba(26,115,232,0.5)] px-4 py-3 text-left text-sm font-medium text-[#1a4b8c]">Action</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                            <tr class="hover:bg-gray-50">
+                              <td class="border-b border-r border-[rgba(26,115,232,0.5)] px-4 py-3 text-sm text-gray-600">Amniocentesis</td>
+                              <td class="border-b border-r border-[rgba(26,115,232,0.5)] px-4 py-3 text-sm text-gray-600">amniocentesis_19052025-rsdsCCV.pdf</td>
+                              <td class="border-b border-r border-[rgba(26,115,232,0.5)] px-4 py-3 text-sm text-gray-600">08-06-2025</td>
+                              <td class="border-b border-[rgba(26,115,232,0.5)] px-4 py-3">
+                                <div class="flex gap-2">
+                                  <button class="text-blue-600 hover:text-blue-700"><i class="fas fa-edit"></i></button>
+                                  <button class="text-red-600 hover:text-red-700"><i class="fas fa-trash"></i></button>
+                                      </div>
+                                    </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                              <td class="border-b border-r border-[rgba(26,115,232,0.5)] px-4 py-3 text-sm text-gray-600">Thyroid function tests</td>
+                              <td class="border-b border-r border-[rgba(26,115,232,0.5)] px-4 py-3 text-sm text-gray-600">thyroidtests_19052025-report1.pdf</td>
+                              <td class="border-b border-r border-[rgba(26,115,232,0.5)] px-4 py-3 text-sm text-gray-600">08-06-2025</td>
+                              <td class="border-b border-[rgba(26,115,232,0.5)] px-4 py-3">
+                                <div class="flex gap-2">
+                                  <button class="text-blue-600 hover:text-blue-700"><i class="fas fa-edit"></i></button>
+                                  <button class="text-red-600 hover:text-red-700"><i class="fas fa-trash"></i></button>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+
+                      <!-- Pagination -->
+                      <div class="flex items-center justify-between mt-4">
+                        <div class="text-sm text-gray-600">
+                          Showing 1 to 2 of 2 entries
+                          </div>
+                        <div class="flex gap-2">
+                          <button class="px-3 py-1 border border-gray-200 rounded-md text-gray-600 hover:bg-gray-50">Previous</button>
+                          <button class="px-3 py-1 bg-[rgba(85,70,153,0.9)] text-white rounded-md">1</button>
+                          <button class="px-3 py-1 border border-gray-200 rounded-md text-gray-600 hover:bg-gray-50">Next</button>
+                        </div>
+                      </div>
+                            </div>
+                          </div>
+
+                  <!-- Medical Certificate Content -->
+                  <div *ngSwitchCase="'medical-certificate'">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Medical Certificate</h2>
+                    <div class="border-b border-gray-200 mb-6"></div>
+                    
+                    <!-- Medical Certificate Form -->
+                    <div class="space-y-6">
+                      <!-- Patient Status Radio Buttons -->
+                      <div class="space-y-3">
+                        <label class="block text-sm font-medium text-gray-700">Patient is</label>
+                        <div class="flex gap-6">
+                          <label class="inline-flex items-center">
+                            <input type="radio" 
+                                   name="patientStatus" 
+                                   value="unfit-duty"
+                                   [(ngModel)]="medicalCertificate.patientStatus"
+                                   class="form-radio h-4 w-4 text-[rgba(85,70,153,0.9)] focus:ring-[rgba(85,70,153,0.9)]">
+                            <span class="ml-2 text-gray-700">Unfit for Duty</span>
+                          </label>
+                          <label class="inline-flex items-center">
+                            <input type="radio" 
+                                   name="patientStatus" 
+                                   value="unfit-physical"
+                                   [(ngModel)]="medicalCertificate.patientStatus"
+                                   class="form-radio h-4 w-4 text-[rgba(85,70,153,0.9)] focus:ring-[rgba(85,70,153,0.9)]">
+                            <span class="ml-2 text-gray-700">Unfit for Physical Activities</span>
+                          </label>
+                        </div>
+                      </div>
+                      
+                      <!-- Duration Fields -->
+                      <div class="grid grid-cols-3 gap-6">
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700 mb-2">Days</label>
+                          <input type="number" 
+                                 [(ngModel)]="medicalCertificate.days"
+                                 class="w-full border border-gray-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[rgba(85,70,153,0.9)]"
+                                 placeholder="Enter days">
+                                      </div>
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700 mb-2">From</label>
+                          <input type="date" 
+                                 [(ngModel)]="medicalCertificate.fromDate"
+                                 class="w-full border border-gray-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[rgba(85,70,153,0.9)]">
+                                      </div>
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700 mb-2">To</label>
+                          <input type="date" 
+                                 [(ngModel)]="medicalCertificate.toDate"
+                                 class="w-full border border-gray-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[rgba(85,70,153,0.9)]">
+                        </div>
+                      </div>
+
+                      <!-- Details Text Area -->
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Details</label>
+                        <textarea [(ngModel)]="medicalCertificate.details"
+                                  class="w-full border border-gray-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[rgba(85,70,153,0.9)]" 
+                                  rows="4" 
+                                  placeholder="Enter certificate details"></textarea>
+                      </div>
+
+                      <!-- Submit Button -->
+                      <div>
+                        <button (click)="submitMedicalCertificate()"
+                                class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition-colors">
+                          Submit Certificate
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

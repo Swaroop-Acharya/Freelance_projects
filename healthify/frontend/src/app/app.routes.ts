@@ -15,6 +15,12 @@ import { AdminSettingsComponent } from './admin-settings/admin-settings.componen
 import { UsersComponent } from './admin/users/users.component';
 import { SettingsComponent } from './admin/settings/settings.component';
 import { OverviewComponent } from './dashboard/overview/overview.component';
+import { DoctorLayoutComponent } from './doctor/doctor-layout/doctor-layout.component';
+import { DashboardDoctorComponent } from './dashboard-doctor/dashboard-doctor.component';
+import { MedicineRequestComponent } from './medicine-request/medicine-request.component';
+import { DoctorAppointmentsComponent } from './doctor-appointments/doctor-appointments.component';
+import { DoctorNotesComponent } from './doctor-notes/doctor-notes.component';
+import { ProfileViewComponent } from './profile-view/profile-view.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -48,5 +54,23 @@ export const routes: Routes = [
   {
     path: 'profile',
     component: ProfileComponent
+  },
+  {
+    path: 'dashboard-doctor',
+    component: DoctorLayoutComponent,
+    children: [
+      { path: '', component: DashboardDoctorComponent },
+      { path: 'medicine-request', component: MedicineRequestComponent },
+      { path: 'change-password', component: ChangePasswordComponent },
+      { path: 'profile', component: ProfileViewComponent }
+    ]
+  },
+  {
+    path: 'doctor-appointments',
+    component: DoctorLayoutComponent,
+    children: [
+      { path: 'appointments', component: DoctorAppointmentsComponent },
+      { path: 'doctor-notes/:id', component: DoctorNotesComponent }
+    ]
   }
 ];
