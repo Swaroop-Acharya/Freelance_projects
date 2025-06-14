@@ -1,0 +1,28 @@
+<div class="flex min-h-screen bg-gray-50">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-[#2c3e50] text-gray-100 flex flex-col py-4">
+    <div class="flex items-center px-6 mb-6">
+      <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-blue-800 font-bold text-lg">Dr</div>
+      <div class="ml-3">
+        <div class="font-semibold leading-tight">Doctor</div>
+        <div class="text-xs flex items-center"><span class="h-2 w-2 rounded-full bg-green-500 mr-2"></span>Available</div>
+      </div>
+    </div>
+    <div class="px-6 text-xs text-gray-400 tracking-widest mb-2">MAIN NAVIGATION</div>
+    <nav class="flex-1">
+      <a routerLink="/dashboard-doctor" routerLinkActive="bg-[#34495e] text-white" class="flex items-center px-6 py-2 rounded-r-full font-medium mb-1">
+        <img [src]="router.url === '/dashboard-doctor' ? 'assets/icons/home-active.svg' : 'assets/icons/home-inactive.svg'" alt="Dashboard Icon" class="w-5 h-5 mr-3" /> Dashboard
+      </a>
+      <a routerLink="/doctor-appointments/appointments" routerLinkActive="bg-[#34495e] text-white" class="flex items-center px-6 py-2 hover:bg-[#34495e] rounded-r-full font-medium mb-1">
+        <img [src]="router.url.includes('/doctor-appointments/appointments') ? 'assets/icons/appointments-active.svg' : 'assets/icons/appointments-inactive.svg'" alt="Appointments Icon" class="w-5 h-5 mr-3" /> Appointments
+      </a>
+      <a routerLink="/dashboard-doctor/medicine-request" routerLinkActive="bg-[#34495e] text-white" class="flex items-center px-6 py-2 hover:bg-[#34495e] rounded-r-full font-medium">
+        <img [src]="router.url.includes('/dashboard-doctor/medicine-request') ? 'assets/icons/medicine-request-active.svg' : 'assets/icons/medicine-request-inactive.svg'" alt="Medicine Request Icon" class="w-5 h-5 mr-3" /> Medicine Request
+      </a>
+    </nav>
+  </aside>
+  <!-- Main Content -->
+  <main class="flex-1 p-8">
+    <router-outlet></router-outlet>
+  </main>
+</div> 
