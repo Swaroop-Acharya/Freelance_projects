@@ -118,12 +118,22 @@ export class DashboardLayoutComponent implements OnInit {
   }
 
   viewProfile() {
+    const role = this.storageService.getItem('role');
+    if (role === 'PHARMACY') {
+      this.router.navigate(['/dashboard-pharmacy/profile']);
+    } else {
     this.router.navigate(['/dashboard/profile']);
+    }
     this.showProfileDropdown = false;
   }
 
   changePassword() {
+    const role = this.storageService.getItem('role');
+    if (role === 'PHARMACY') {
+      this.router.navigate(['/dashboard-pharmacy/change-password']);
+    } else {
     this.router.navigate(['/dashboard/change-password']);
+    }
     this.showProfileDropdown = false;
   }
 

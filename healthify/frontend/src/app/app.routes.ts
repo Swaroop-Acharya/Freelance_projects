@@ -72,5 +72,9 @@ export const routes: Routes = [
       { path: 'appointments', component: DoctorAppointmentsComponent },
       { path: 'doctor-notes/:id', component: DoctorNotesComponent }
     ]
+  },
+  {
+    path: 'dashboard-pharmacy',
+    loadChildren: () => import('./pharmacy/pharmacy.module').then(m => m.PharmacyModule)
   }
 ];

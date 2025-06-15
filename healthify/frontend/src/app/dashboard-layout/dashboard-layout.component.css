@@ -1,8 +1,10 @@
 .dashboard-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
   position: relative;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .sidebar {
@@ -15,7 +17,7 @@
   position: fixed;
   left: 0;
   top: 64px;
-  z-index: 1000;
+  z-index: 1001;
 }
 
 .sidebar-closed {
@@ -142,13 +144,18 @@
 .main-content {
   flex: 1;
   margin-left: 250px;
-  transition: margin-left 0.3s ease;
+  transition: all 0.3s ease;
   width: calc(100% - 250px);
   display: flex;
   flex-direction: column;
+  min-height: calc(100vh - 64px);
+  margin-top: 64px;
+  padding-bottom: 60px;
+  box-sizing: border-box;
+  position: relative;
 }
 
-.main-content-expanded {
+.sidebar-closed ~ .main-content {
   margin-left: 70px;
   width: calc(100% - 70px);
 }
@@ -233,10 +240,9 @@
 }
 
 .content-area {
+  flex: 1;
   padding: 1.5rem;
   background-color: #f3f4f6;
-  min-height: calc(100vh - 64px);
-  margin-top: 64px;
 }
 
 .navbar-right {
@@ -423,4 +429,54 @@
 
 .sidebar-closed .menu-item:hover::before {
   opacity: 1;
+}
+
+/* Footer Styles */
+.footer {
+  background: #fff;
+  padding: 1rem 2rem;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #666;
+  font-size: 0.9rem;
+  position: fixed;
+  bottom: 0;
+  left: 250px;
+  right: 0;
+  z-index: 999;
+  transition: all 0.3s ease;
+  height: 60px;
+  width: calc(100% - 250px);
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.sidebar-closed ~ .main-content .footer {
+  left: 70px;
+  width: calc(100% - 70px);
+}
+
+.copyright {
+  color: #666;
+}
+
+.powered-by {
+  color: #406e8d;
+  font-weight: 500;
+}
+
+/* Ensure content doesn't get hidden behind footer */
+:host ::ng-deep router-outlet + * {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 64px);
+  padding-bottom: 60px;
+}
+
+/* Ensure footer transitions with sidebar */
+.sidebar-closed ~ .footer {
+  left: 70px;
+  width: calc(100% - 70px);
 }
