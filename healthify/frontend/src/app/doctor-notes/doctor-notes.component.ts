@@ -92,4 +92,28 @@ export class DoctorNotesComponent implements OnInit {
       details: ''
     };
   }
+
+  submitForm() {
+    // Here you would typically collect all form data and submit it
+    console.log('Submitting form with data:', {
+      overviewNotes: this.overviewNotes,
+      immediateNotes: this.immediateNotes,
+      // Add other form data as needed
+    });
+    // Add your API call here
+  }
+
+  resetForm() {
+    // Reset all form fields to their initial state
+    this.overviewNotes = '';
+    this.immediateNotes = '';
+    this.medicalCertificate = {
+      patientStatus: '',
+      days: '',
+      fromDate: '',
+      toDate: '',
+      details: ''
+    };
+    // Reset other form fields as needed
+  }
 }

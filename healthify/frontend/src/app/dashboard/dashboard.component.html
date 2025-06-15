@@ -67,3 +67,141 @@
     </div>
   </div>
 </div> 
+
+<!-- Additional Dashboard Sections -->
+<div class="dashboard-grid mt-8">
+  <!-- Low Stock Medicines -->
+  <div class="dashboard-card">
+    <div class="card-header">
+      <h2>Low Stock Medicines</h2>
+    </div>
+    <div class="activity-list">
+      <div class="activity-item">
+        <div class="activity-icon">
+          <i class="fas fa-pills"></i>
+        </div>
+        <div class="activity-details">
+          <div class="activity-info">
+            <p class="activity-text">Amoxicillin 500mg</p>
+            <p class="activity-time warning">15 boxes left</p>
+          </div>
+          <button class="reorder-btn">Reorder</button>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-icon">
+          <i class="fas fa-pills"></i>
+        </div>
+        <div class="activity-details">
+          <div class="activity-info">
+            <p class="activity-text">Ibuprofen 200mg</p>
+            <p class="activity-time warning">8 boxes left</p>
+          </div>
+          <button class="reorder-btn">Reorder</button>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-icon">
+          <i class="fas fa-pills"></i>
+        </div>
+        <div class="activity-details">
+          <div class="activity-info">
+            <p class="activity-text">Paracetamol 500mg</p>
+            <p class="activity-time critical">3 boxes left</p>
+          </div>
+          <button class="reorder-btn">Reorder</button>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-icon">
+          <i class="fas fa-bandage"></i>
+        </div>
+        <div class="activity-details">
+          <div class="activity-info">
+            <p class="activity-text">Bandages</p>
+            <p class="activity-time warning">12 boxes left</p>
+          </div>
+          <button class="reorder-btn">Reorder</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Total Patients Chart -->
+  <div class="dashboard-card">
+    <div class="card-header">
+      <h2>Total Patients Details - March 2025</h2>
+    </div>
+    <div class="chart-container">
+      <div class="chart">
+        <div class="y-axis">
+          <div class="y-label">Week 5</div>
+          <div class="y-label">Week 4</div>
+          <div class="y-label">Week 3</div>
+          <div class="y-label">Week 2</div>
+          <div class="y-label">Week 1</div>
+        </div>
+        <div class="chart-bars">
+          <div class="chart-bar" *ngFor="let week of patientData">
+            <div class="bar-container">
+              <div class="bar" [style.height.%]="(week.total / maxPatients) * 100">
+                <span class="bar-value">{{week.total}}</span>
+              </div>
+            </div>
+            <span class="bar-label">Week {{week.week}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="dashboard-grid mt-8">
+  <!-- Upcoming Appointments -->
+  <div class="dashboard-card">
+    <div class="card-header">
+      <h2>Upcoming Appointments</h2>
+    </div>
+    <div class="appointment-list">
+      <div class="appointment-item" *ngFor="let appointment of appointments">
+        <div class="appointment-content">
+          <div class="appointment-header">
+            <h3 class="patient-name">{{appointment.patientName}}</h3>
+            <p class="appointment-type">{{appointment.type}}</p>
+          </div>
+          <div class="appointment-details">
+            <p class="doctor-name">{{appointment.doctorName}}</p>
+          </div>
+        </div>
+        <div class="appointment-info">
+          <div class="appointment-time">
+            <i class="far fa-clock"></i>
+            <span>{{appointment.time}}</span>
+          </div>
+          <div class="appointment-room">
+            <i class="fas fa-door-open"></i>
+            <span>{{appointment.room}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="dashboard-card">
+    <div class="card-header">
+      <h2>Recent Activity</h2>
+    </div>
+    <div class="activity-list">
+      <div class="activity-item" *ngFor="let activity of recentActivities">
+        <div class="activity-icon" [ngClass]="activity.iconClass">
+          <i [class]="activity.icon"></i>
+        </div>
+        <div class="activity-details">
+          <p class="activity-text">{{activity.description}}</p>
+          <p class="activity-time">{{activity.timeAgo}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

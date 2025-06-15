@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { NotificationsComponent } from '../../notifications/notifications.component';
 import { FormsModule } from '@angular/forms';
+import { filter } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-doctor-layout',
+  selector: 'app-pharmacy-layout',
   standalone: true,
   imports: [CommonModule, RouterModule, NotificationsComponent, FormsModule],
   template: `
@@ -14,7 +15,7 @@ import { FormsModule } from '@angular/forms';
       <nav class="top-navbar">
         <div class="navbar-left">
           <div class="company-name" [class.company-logo]="!sidebarOpen">
-            <span *ngIf="sidebarOpen">C2CAS Doctor</span>
+            <span *ngIf="sidebarOpen">C2CAS Pharmacy</span>
             <img *ngIf="!sidebarOpen" src="assets/images/logo-sml.jpg" alt="C2CAS Logo" class="logo-image">
           </div>
           <button class="menu-toggle" (click)="toggleSidebar()">
@@ -38,15 +39,15 @@ import { FormsModule } from '@angular/forms';
           <!-- Profile -->
           <div class="profile-dropdown">
             <button class="profile-button" (click)="toggleProfile()">
-              <div class="profile-initials">Dr</div>
+              <div class="profile-initials">Ph</div>
             </button>
             
             <div class="dropdown-menu" *ngIf="showProfile">
               <div class="profile-info">
-                <div class="profile-avatar">Dr</div>
+                <div class="profile-avatar">Ph</div>
                 <div class="profile-details">
-                  <div class="profile-name">Doctor</div>
-                  <div class="profile-title">Medical Staff</div>
+                  <div class="profile-name">Pharmacist</div>
+                  <div class="profile-title">Pharmacy Staff</div>
                   <div class="member-since">Member since Nov 2022</div>
                 </div>
               </div>
@@ -73,9 +74,9 @@ import { FormsModule } from '@angular/forms';
       <!-- Sidebar -->
       <div class="sidebar" [class.sidebar-closed]="!sidebarOpen">
         <div class="user-profile">
-          <div class="user-avatar">Dr</div>
+          <div class="user-avatar">Ph</div>
           <div class="user-info" *ngIf="sidebarOpen">
-            <div class="user-name">Dr. Alexander Pierce</div>
+            <div class="user-name">Ph. Alexander Pierce</div>
             <div class="availability">
               <span class="status-dot"></span>
               Available
@@ -86,22 +87,28 @@ import { FormsModule } from '@angular/forms';
         <div class="menu-title" *ngIf="sidebarOpen">MAIN NAVIGATION</div>
         <ul class="menu-list">
           <li>
-            <button class="menu-item" routerLink="/dashboard-doctor" routerLinkActive="active" data-tooltip="Dashboard">
+            <a class="menu-item" routerLink="dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" data-tooltip="Dashboard">
               <i class="fas fa-dashboard"></i>
               <span class="menu-text" *ngIf="sidebarOpen">Dashboard</span>
-            </button>
+            </a>
           </li>
           <li>
-            <button class="menu-item" routerLink="/doctor-appointments/appointments" routerLinkActive="active" data-tooltip="Appointments">
-              <i class="fas fa-calendar"></i>
-              <span class="menu-text" *ngIf="sidebarOpen">Appointments</span>
-            </button>
+            <a class="menu-item" routerLink="inventory" routerLinkActive="active" data-tooltip="Inventory">
+              <i class="fas fa-boxes"></i>
+              <span class="menu-text" *ngIf="sidebarOpen">Inventory</span>
+            </a>
           </li>
           <li>
-            <button class="menu-item" routerLink="/dashboard-doctor/medicine-request" routerLinkActive="active" data-tooltip="Medicine Request">
+            <a class="menu-item" routerLink="prescriptions" routerLinkActive="active" data-tooltip="Prescriptions">
+              <i class="fas fa-prescription"></i>
+              <span class="menu-text" *ngIf="sidebarOpen">Prescriptions</span>
+            </a>
+          </li>
+          <li>
+            <a class="menu-item" routerLink="requested-medicines" routerLinkActive="active" data-tooltip="Requested Medicines">
               <i class="fas fa-pills"></i>
-              <span class="menu-text" *ngIf="sidebarOpen">Medicine Request</span>
-            </button>
+              <span class="menu-text" *ngIf="sidebarOpen">Requested Medicines</span>
+            </a>
           </li>
         </ul>
       </div>
@@ -596,16 +603,34 @@ import { FormsModule } from '@angular/forms';
     }
   `]
 })
-export class DoctorLayoutComponent implements OnInit {
+export class PharmacyLayoutComponent implements OnInit {
   sidebarOpen = true;
   showNotifications = false;
   showProfile = false;
   unreadNotifications = 3;
   currentPage = 'Dashboard';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+    console.log('PharmacyLayoutComponent constructor');
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: NavigationEnd) => {
+      console.log('Navigation event:', event);
+      this.updateCurrentPage(event.url);
+    });
+  }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log('PharmacyLayoutComponent ngOnInit');
+    this.updateCurrentPage(this.router.url);
+  }
+
+  updateCurrentPage(url: string) {
+    console.log('Updating current page for URL:', url);
+    const path = url.split('/').pop() || 'dashboard';
+    this.currentPage = path.charAt(0).toUpperCase() + path.slice(1).replace(/-/g, ' ');
+    console.log('Current page updated to:', this.currentPage);
+  }
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
@@ -626,18 +651,16 @@ export class DoctorLayoutComponent implements OnInit {
   }
 
   navigateToProfile() {
-    this.router.navigate(['/dashboard-doctor/profile']);
+    this.router.navigate(['/dashboard-pharmacy/profile']);
     this.showProfile = false;
   }
 
   navigateToChangePassword() {
-    this.router.navigate(['/dashboard-doctor/change-password']);
+    this.router.navigate(['/dashboard-pharmacy/change-password']);
     this.showProfile = false;
   }
 
   logout() {
-    // Implement logout logic here
-    console.log('Logout clicked');
     this.router.navigate(['/login']);
     this.showProfile = false;
   }
